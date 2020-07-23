@@ -145,7 +145,10 @@ int create_server(unsigned short port)
     loc_addr.l2_psm = htobs(port);
     // security level  ??? loc_addr.l2_cid = htobs(CID_ATT);
 
-    setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, &reuse_addr, sizeof(reuse_addr));
+    if (setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, &reuse_addr, sizeof(reuse_addr)) < 0) {
+        perror("setsockopt");
+        return -1;
+    }
 
     if (bind(sock, (struct sockaddr*)&loc_addr, sizeof(loc_addr)) < 0) {
         perror("bind");
