@@ -86,8 +86,9 @@ void client()
 {
     struct sockaddr_l2 addr;
     int sock, status;
-    char dest[18] = "A0:C5:89:F6:B1:33";
-    //char dest[18] = "40:EF:4C:1B:0C:A5";
+    //char dest[18] = "A0:C5:89:F6:B1:33"; // SWIFT
+    //char dest[18] = "40:EF:4C:1B:0C:A5"; // EDIFIER
+    char dest[18] = "74:29:AF:80:20:80"; // ASPIRE
 
     // allocate a socket
     sock = socket(AF_BLUETOOTH, SOCK_SEQPACKET, BTPROTO_L2CAP);
@@ -99,7 +100,7 @@ void client()
     // set the connection parameters (who to connect to)
     memset(&addr, 0, sizeof(addr));
     addr.l2_family = AF_BLUETOOTH;
-    addr.l2_psm = htobs(0x1001);
+    addr.l2_psm = htobs(PORT);
     str2ba(dest, &addr.l2_bdaddr);
 
     // connect to server
@@ -111,8 +112,12 @@ void client()
     }
     // send a message
     status = write(sock, "hello!", 6);
-    if (status < 0)
+    if (status < 0) {
         perror("write");
+        close(sock);
+        return;
+    }
+    printf("Send\n");
     close(sock);
 }
 
@@ -120,6 +125,7 @@ int create_server(unsigned short port)
 {
     struct sockaddr_l2 loc_addr;
     int sock;
+    int reuse_addr = 1;
 
     // allocate socket
     sock = socket(AF_BLUETOOTH, SOCK_SEQPACKET, BTPROTO_L2CAP);
@@ -135,7 +141,12 @@ int create_server(unsigned short port)
     // same as : loc_addr.l2_bdaddr = *BDADDR_ANY;
     // but it's illegal to take the address of an rvalue temporary in cpp
     memset(&(loc_addr.l2_bdaddr), 0, sizeof(loc_addr.l2_bdaddr));
+    loc_addr.l2_bdaddr_type = BDADDR_LE_PUBLIC;
     loc_addr.l2_psm = htobs(port);
+    // security level  ??? loc_addr.l2_cid = htobs(CID_ATT);
+
+    setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, &reuse_addr, sizeof(reuse_addr));
+
     if (bind(sock, (struct sockaddr*)&loc_addr, sizeof(loc_addr)) < 0) {
         perror("bind");
         return -1;
