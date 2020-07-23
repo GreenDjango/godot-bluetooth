@@ -141,7 +141,7 @@ int create_server(unsigned short port)
     // same as : loc_addr.l2_bdaddr = *BDADDR_ANY;
     // but it's illegal to take the address of an rvalue temporary in cpp
     memset(&(loc_addr.l2_bdaddr), 0, sizeof(loc_addr.l2_bdaddr));
-    loc_addr.l2_bdaddr_type = BDADDR_LE_PUBLIC;
+    loc_addr.l2_bdaddr_type = BDADDR_BREDR;
     loc_addr.l2_psm = htobs(port);
     // security level  ??? loc_addr.l2_cid = htobs(CID_ATT);
 
