@@ -1,6 +1,13 @@
 # VS code
 .vscode/
 
+# CMake
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+*_autogen/
+Makefile
+
 # Prerequisites
 *.d
 
