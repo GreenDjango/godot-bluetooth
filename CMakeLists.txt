@@ -11,10 +11,11 @@ if(CMAKE_VERSION VERSION_LESS "3.7.0")
     set(CMAKE_INCLUDE_CURRENT_DIR ON)
 endif()
 
-find_package(Qt5 COMPONENTS Widgets REQUIRED)
+find_package(Qt5 COMPONENTS Core Widgets Bluetooth REQUIRED)
 
 set(SRCS
     "src/main.cpp"
+    "src/DeviceDiscoveryDialog.cpp"
 )
 
 set(INCS
@@ -23,6 +24,6 @@ set(INCS
 
 add_executable(gblue.out ${SRCS})
 target_include_directories(gblue.out PRIVATE ${INCS})
-target_compile_options(gblue.out PRIVATE -Werror -Wall -Wextra)
+target_compile_options(gblue.out PRIVATE -Werror -Wall -Wextra -g3)
 
-target_link_libraries(gblue.out Qt5::Widgets)
+target_link_libraries(gblue.out Qt5::Core Qt5::Widgets Qt5::Bluetooth)

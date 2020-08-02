@@ -5,9 +5,16 @@
 ** main.cpp
 */
 
-#include "main.hpp"
+#include "DeviceDiscoveryDialog.hpp"
+#include <QtCore/qloggingcategory.h>
+#include <QtWidgets/QApplication>
 
-int main(void)
+int main(int argc, char** argv)
 {
-    std::cout << "Hello !\n";
+    //QLoggingCategory::setFilterRules(QStringLiteral("qt.bluetooth* = true"));
+    QApplication app(argc, argv);
+    DeviceDiscoveryDialog d;
+    d.startScan();
+    app.connect(&d, &DeviceDiscoveryDialog::finished, &app, &QApplication::quit);
+    return app.exec();
 }
