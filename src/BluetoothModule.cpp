@@ -53,9 +53,9 @@ BluetoothModule::BluetoothModule()
 
 BluetoothModule::~BluetoothModule()
 {
-    if (rfcommServer)
+    if (hasServer())
         stopServer();
-    if (socketClient)
+    if (hasClient())
         stopClient();
     delete discoveryAgent;
     delete localDevice;
@@ -87,9 +87,11 @@ void BluetoothModule::setGeneralUnlimited(bool unlimited)
 
 void BluetoothModule::startServer()
 {
+    if (hasServer())
+        return;
     switchDiscoverable();
     rfcommServer = new QBluetoothServer(QBluetoothServiceInfo::RfcommProtocol, this);
-    connect(rfcommServer, &QBluetoothServer::newConnection, this, &BluetoothModule::newConnectionServer);
+    connect(rfcommServer, &QBluetoothServer::newConnection, this, &BluetoothModule::newClientOnServer);
     bool result = rfcommServer->listen(localDevice->address());
     if (!result) {
         std::cout << "[SERVER] Cannot bind chat server to" << localDevice->address().toString().toStdString();
@@ -123,17 +125,22 @@ void BluetoothModule::startServer()
 
 void BluetoothModule::stopServer()
 {
-    if (!rfcommServer)
+    if (!hasServer())
         return;
     serviceInfoServer.unregisterService();
-    //qDeleteAll(clientSockets);
+    qDeleteAll(clientSockets);
     delete rfcommServer;
     rfcommServer = nullptr;
 }
 
+bool BluetoothModule::hasServer()
+{
+    return (rfcommServer != nullptr);
+}
+
 void BluetoothModule::startClient()
 {
-    if (socketClient)
+    if (hasClient())
         return;
     // Connect to service
     QBluetoothServiceInfo remoteService;
@@ -141,24 +148,42 @@ void BluetoothModule::startClient()
     static const QLatin1String serviceUuid(BT_SERVICE_UUID);
     remoteService.setServiceUuid(QBluetoothUuid(serviceUuid));
     socketClient = new QBluetoothSocket(QBluetoothServiceInfo::RfcommProtocol, this);
-    std::cout << "Create socket\n";
     socketClient->connectToService(remoteService);
-    std::cout << "ConnectToService done\n";
 
-    connect(socketClient, &QBluetoothSocket::readyRead, this, &BluetoothModule::readSocket);
+    connect(socketClient, &QBluetoothSocket::readyRead, this, &BluetoothModule::readSocketClient);
+    connect(socketClient, &QBluetoothSocket::connected, this, &BluetoothModule::newServerOnClient);
+    connect(socketClient, &QBluetoothSocket::disconnected, this, &BluetoothModule::lostServerOnClient);
     /*
-    connect(socketClient, &QBluetoothSocket::connected, this, &BluetoothModule::connected);
-    connect(socketClient, &QBluetoothSocket::disconnected, this, &BluetoothModule::disconnected);
+    connect(socketClient, SIGNAL(error(QBluetoothSocket::SocketError)), this, SLOT(socketError(QBluetoothSocket::SocketError)));
+    */
+}
+
+void BluetoothModule::startClient(const std::string& host)
+{
+    if (hasClient())
+        return;
+    socketClient = new QBluetoothSocket(QBluetoothServiceInfo::RfcommProtocol, this);
+    socketClient->connectToService(QBluetoothAddress(QString(host.c_str())), QBluetoothUuid(QLatin1String(BT_SERVICE_UUID)));
+
+    connect(socketClient, &QBluetoothSocket::readyRead, this, &BluetoothModule::readSocketClient);
+    connect(socketClient, &QBluetoothSocket::connected, this, &BluetoothModule::newServerOnClient);
+    connect(socketClient, &QBluetoothSocket::disconnected, this, &BluetoothModule::lostServerOnClient);
+    /*
     connect(socketClient, SIGNAL(error(QBluetoothSocket::SocketError)), this, SLOT(socketError(QBluetoothSocket::SocketError)));
     */
 }
 
 void BluetoothModule::stopClient()
 {
-    if (!socketClient)
+    if (!hasClient())
         return;
     delete socketClient;
     socketClient = nullptr;
+}
+
+bool BluetoothModule::hasClient()
+{
+    return (socketClient != nullptr);
 }
 
 void BluetoothModule::startScan()
@@ -209,24 +234,63 @@ void BluetoothModule::hostModeStateChanged(QBluetoothLocalDevice::HostMode mode)
         std::cout << "Host Not Discoverable\n";
 }
 
-void BluetoothModule::newConnectionServer()
+void BluetoothModule::newClientOnServer()
 {
+    if (!hasServer())
+        return;
     QBluetoothSocket* socket = rfcommServer->nextPendingConnection();
     if (!socket)
         return;
 
     std::cout << "[SERVER] New Client, " << socket->peerAddress().toString().toStdString() << " " << socket->peerName().toStdString() << "\n";
-    //connect(socket, &QBluetoothSocket::readyRead, this, &ChatServer::readSocket);
-    //connect(socket, &QBluetoothSocket::disconnected, this, QOverload<>::of(&ChatServer::clientDisconnected));
+    connect(socket, &QBluetoothSocket::readyRead, this, &BluetoothModule::readSocketServer);
+    connect(socket, &QBluetoothSocket::disconnected, this, &BluetoothModule::lostClientOnServer);
     clientSockets.append(socket);
+
     QByteArray text = tr("Hello !!!").toUtf8() + '\n';
     socket->write(text);
     //emit clientConnected(socket->peerName());
 }
 
-void BluetoothModule::readSocket()
+void BluetoothModule::lostClientOnServer()
 {
-    if (!socketClient)
+    QBluetoothSocket *socket = qobject_cast<QBluetoothSocket *>(sender());
+    if (!socket)
+        return;
+
+    //emit clientDisconnected();
+    clientSockets.removeOne(socket);
+    socket->deleteLater();
+}
+
+void BluetoothModule::readSocketServer()
+{
+    if (!hasServer())
+        return;
+    QBluetoothSocket *socket = qobject_cast<QBluetoothSocket *>(sender());
+    if (!socket)
+        return;
+
+    while (socket->canReadLine()) {
+        QByteArray line = socket->readLine().trimmed();
+        std::cout << "[SERVER] " << socketClient->peerName().toStdString() << ": " << QString::fromUtf8(line.constData(), line.length()).toStdString() << "\n";
+        //emit messageReceived();
+    }
+}
+
+void BluetoothModule::newServerOnClient()
+{
+    //emit connected(socketClient->peerName());
+}
+
+void BluetoothModule::lostServerOnClient()
+{
+    std::cout << "Server disconnected\n";
+}
+
+void BluetoothModule::readSocketClient()
+{
+    if (!hasClient())
         return;
 
     while (socketClient->canReadLine()) {
