@@ -19,6 +19,9 @@
 #include <iostream>
 #include <map>
 
+#define BT_SERVICE_NAME "Bt Godot Server"
+#define BT_SERVICE_UUID "5ddaae8e-223d-45fe-98fb-ee2ec12f5a64"
+
 /*class ServiceDiscoveryDialog : public QObject {
 
 public:
@@ -40,7 +43,7 @@ public:
     void setGeneralUnlimited(bool unlimited = true);
     void startServer();
     void stopServer();
-    void startClient(const QBluetoothServiceInfo&);
+    void startClient();
     void stopClient();
     void startScan();
 

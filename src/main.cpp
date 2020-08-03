@@ -16,6 +16,5 @@ int main(int argc, char** argv)
     BluetoothModule m;
     app.connect(&m, &BluetoothModule::finished, &app, &QApplication::quit);
     m.startServer();
-    //74:29:AF:80:20:80
     return app.exec();
 }

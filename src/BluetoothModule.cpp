@@ -87,6 +87,7 @@ void BluetoothModule::setGeneralUnlimited(bool unlimited)
 
 void BluetoothModule::startServer()
 {
+    switchDiscoverable();
     rfcommServer = new QBluetoothServer(QBluetoothServiceInfo::RfcommProtocol, this);
     connect(rfcommServer, &QBluetoothServer::newConnection, this, &BluetoothModule::newConnectionServer);
     bool result = rfcommServer->listen(localDevice->address());
@@ -97,11 +98,11 @@ void BluetoothModule::startServer()
     std::cout << "[SERVER] " << rfcommServer->serverAddress().toString().toStdString() << " " << rfcommServer->serverPort() << "\n";
 
     //! [Service name, description and provider]
-    serviceInfoServer.setAttribute(QBluetoothServiceInfo::ServiceName, tr("Bt Godot Server"));
+    serviceInfoServer.setAttribute(QBluetoothServiceInfo::ServiceName, tr(BT_SERVICE_NAME));
     serviceInfoServer.setAttribute(QBluetoothServiceInfo::ServiceDescription, tr("Godot game engine server"));
     serviceInfoServer.setAttribute(QBluetoothServiceInfo::ServiceProvider, tr("godotengine.org"));
     //! [Service UUID set]
-    static const QLatin1String serviceUuid("5ddaae8e-223d-45fe-98fb-ee2ec12f5a64");
+    static const QLatin1String serviceUuid(BT_SERVICE_UUID);
     serviceInfoServer.setServiceUuid(QBluetoothUuid(serviceUuid));
     //! [Service Discoverability]
     QBluetoothServiceInfo::Sequence publicBrowse;
@@ -130,15 +131,19 @@ void BluetoothModule::stopServer()
     rfcommServer = nullptr;
 }
 
-void BluetoothModule::startClient(const QBluetoothServiceInfo& remoteService)
+void BluetoothModule::startClient()
 {
     if (socketClient)
         return;
     // Connect to service
+    QBluetoothServiceInfo remoteService;
+    remoteService.setAttribute(QBluetoothServiceInfo::ServiceName, tr(BT_SERVICE_NAME));
+    static const QLatin1String serviceUuid(BT_SERVICE_UUID);
+    remoteService.setServiceUuid(QBluetoothUuid(serviceUuid));
     socketClient = new QBluetoothSocket(QBluetoothServiceInfo::RfcommProtocol, this);
-    std::cout << "Create socket";
+    std::cout << "Create socket\n";
     socketClient->connectToService(remoteService);
-    std::cout << "ConnectToService done";
+    std::cout << "ConnectToService done\n";
 
     connect(socketClient, &QBluetoothSocket::readyRead, this, &BluetoothModule::readSocket);
     /*
