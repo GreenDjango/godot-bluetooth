@@ -15,7 +15,7 @@ find_package(Qt5 COMPONENTS Core Widgets Bluetooth REQUIRED)
 
 set(SRCS
     "src/main.cpp"
-    "src/DeviceDiscoveryDialog.cpp"
+    "src/BluetoothModule.cpp"
 )
 
 set(INCS
