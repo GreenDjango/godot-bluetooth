@@ -7,6 +7,9 @@
 
 #include "BluetoothModule.hpp"
 #include "moc_BluetoothModule.cpp"
+#include <QtCore/qdatetime.h>
+
+QTime t;
 
 /// --- ServiceDiscoveryDialog ---
 /*ServiceDiscoveryDialog::ServiceDiscoveryDialog(const QBluetoothAddress& address)
@@ -89,6 +92,7 @@ void BluetoothModule::startServer()
 {
     if (hasServer())
         return;
+    switchPower();
     switchDiscoverable();
     rfcommServer = new QBluetoothServer(QBluetoothServiceInfo::RfcommProtocol, this);
     connect(rfcommServer, &QBluetoothServer::newConnection, this, &BluetoothModule::newClientOnServer);
@@ -142,6 +146,7 @@ void BluetoothModule::startClient()
 {
     if (hasClient())
         return;
+    switchPower();
     // Connect to service
     QBluetoothServiceInfo remoteService;
     remoteService.setAttribute(QBluetoothServiceInfo::ServiceName, tr(BT_SERVICE_NAME));
@@ -249,12 +254,13 @@ void BluetoothModule::newClientOnServer()
 
     QByteArray text = tr("Hello !!!").toUtf8() + '\n';
     socket->write(text);
+    t.start();
     //emit clientConnected(socket->peerName());
 }
 
 void BluetoothModule::lostClientOnServer()
 {
-    QBluetoothSocket *socket = qobject_cast<QBluetoothSocket *>(sender());
+    QBluetoothSocket* socket = qobject_cast<QBluetoothSocket*>(sender());
     if (!socket)
         return;
 
@@ -267,15 +273,17 @@ void BluetoothModule::readSocketServer()
 {
     if (!hasServer())
         return;
-    QBluetoothSocket *socket = qobject_cast<QBluetoothSocket *>(sender());
+    QBluetoothSocket* socket = qobject_cast<QBluetoothSocket*>(sender());
     if (!socket)
         return;
 
     while (socket->canReadLine()) {
         QByteArray line = socket->readLine().trimmed();
-        std::cout << "[SERVER] " << socketClient->peerName().toStdString() << ": " << QString::fromUtf8(line.constData(), line.length()).toStdString() << "\n";
+        std::cout << "[SERVER] (" << std::to_string(t.restart()) << "ms) "<<socket->peerName().toStdString() << ": " << QString::fromUtf8(line.constData(), line.length()).toStdString() << "\n";
         //emit messageReceived();
     }
+    QByteArray text = tr("Hello !!!").toUtf8() + '\n';
+    socket->write(text);
 }
 
 void BluetoothModule::newServerOnClient()
