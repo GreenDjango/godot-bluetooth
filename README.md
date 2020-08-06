@@ -22,6 +22,7 @@
 ## TODO
 - doc_classes need to be written for GDScript documentation.
 - Provide some other singleton class.
+- Use https://code.qt.io/cgit/qt/qtconnectivity.git/tree/src/bluetooth code rather than Qt5
 - [WIN] build pipeline untested.
 - [OSX] build pipeline untested.
 - [ANDROID] build pipeline untested.

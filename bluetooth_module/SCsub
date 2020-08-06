@@ -1,31 +1,22 @@
 #!/usr/bin/env python
 
+import os
 Import("env")
 Import("env_modules")
 
-env_enet = env_modules.Clone()
+os.system('cmake .')
+os.system('make gblue_autogen')
 
-# Thirdparty source files
+env_module = env_modules.Clone()
+env_module.Append(
+	CPPFLAGS=["-Imodules/bluetooth_module/src", "-Imodules/bluetooth_module/gblue_autogen/include", "-I/usr/include/qt5", "-I/usr/lib64/qt5/mkspecs/linux-g++", "-fPIC"],
+	CXXFLAGS=["-std=c++17", "-std=gnu++17", "-DQT_BLUETOOTH_LIB", "-DQT_CORE_LIB", "-DQT_GUI_LIB", "-DQT_NO_DEBUG", "-DQT_WIDGETS_LIB"]
+)
+# env_module.Append(CPPPATH=["src"])
 
-if env["builtin_enet"]:
-    thirdparty_dir = "#thirdparty/enet/"
-    thirdparty_sources = [
-        "godot.cpp",
-        "callbacks.c",
-        "compress.c",
-        "host.c",
-        "list.c",
-        "packet.c",
-        "peer.c",
-        "protocol.c",
-    ]
-    thirdparty_sources = [thirdparty_dir + file for file in thirdparty_sources]
+env_module.add_source_files(env.modules_sources, "src/*.cpp")
+env_module.add_source_files(env.modules_sources, "*.cpp")
 
-    env_enet.Prepend(CPPPATH=[thirdparty_dir])
-    env_enet.Append(CPPDEFINES=["GODOT_ENET"])
-
-    env_thirdparty = env_enet.Clone()
-    env_thirdparty.disable_warnings()
-    env_thirdparty.add_source_files(env.modules_sources, thirdparty_sources)
-
-env_enet.add_source_files(env.modules_sources, "*.cpp")
+# -rdynamic
+env.Append(LIBPATH=['/usr/lib64'])
+env.Append(LIBS=['Qt5Core', 'Qt5Widgets', 'Qt5Gui', 'Qt5Bluetooth'])

@@ -8,7 +8,7 @@
 #ifndef BTM_REGISTER_TYPES_H
 #define BTM_REGISTER_TYPES_H
 
-void register_btm_types();
-void unregister_btm_types();
+void register_bluetooth_module_types();
+void unregister_bluetooth_module_types();
 
 #endif // BTM_REGISTER_TYPES_H
