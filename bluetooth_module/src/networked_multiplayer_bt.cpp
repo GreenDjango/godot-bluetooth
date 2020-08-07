@@ -6,7 +6,6 @@
 */
 
 #include "networked_multiplayer_bt.h"
-#include "moc_networked_multiplayer_bt.cpp"
 #include "core/os/os.h"
 
 int enet_initialize(void) {
@@ -369,6 +368,7 @@ void NetworkedMultiplayerBt::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_peer_address", "id"), &NetworkedMultiplayerBt::get_peer_address);
 	ClassDB::bind_method(D_METHOD("get_peer_port", "id"), &NetworkedMultiplayerBt::get_peer_port);
 
+	ClassDB::bind_method(D_METHOD("is_server"), &NetworkedMultiplayerBt::is_server);
 	ClassDB::bind_method(D_METHOD("set_server_relay_enabled", "enabled"), &NetworkedMultiplayerBt::set_server_relay_enabled);
 	ClassDB::bind_method(D_METHOD("is_server_relay_enabled"), &NetworkedMultiplayerBt::is_server_relay_enabled);
 
@@ -376,11 +376,8 @@ void NetworkedMultiplayerBt::_bind_methods() {
 }
 
 NetworkedMultiplayerBt::NetworkedMultiplayerBt() {
-	//_argv = ((char **)calloc(1, sizeof(char *)));
-	//_argv[0] = ((char *)calloc(20, sizeof(char)));
-	//strcpy(_argv[0], "BluetoothModule");
-	//app = new QApplication(_argc, _argv);
 
+	ERR_PRINT("YO WHAT UP ?");
 	active = false;
 	server = false;
 	refuse_connections = false;
@@ -390,8 +387,6 @@ NetworkedMultiplayerBt::NetworkedMultiplayerBt() {
 	current_packet.packet = NULL;
 	transfer_mode = TRANSFER_MODE_RELIABLE;
 	connection_status = CONNECTION_DISCONNECTED;
-
-	//app.exec();
 }
 
 NetworkedMultiplayerBt::~NetworkedMultiplayerBt() {

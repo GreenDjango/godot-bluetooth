@@ -9,9 +9,7 @@
 #define NETWORKED_MULTIPLAYER_BT_H
 
 #include "core/io/networked_multiplayer_peer.h"
-#include <QtCore/QObject>
-#include <QtWidgets/QApplication>
-#include <iostream>
+#include "BluetoothModule.h"
 
 int enet_initialize(void);
 void enet_deinitialize(void);
@@ -19,17 +17,15 @@ void enet_deinitialize(void);
 /*#include "core/crypto/crypto.h"
 #include "core/io/compression.h"
 
+sudo setcap 'cap_net_raw,cap_net_admin+eip' ./bin/godot.x11.tools.64
+
 #include <enet/enet.h>
 */
-
-class NetworkedMultiplayerBt : public QObject, public NetworkedMultiplayerPeer {
-	Q_OBJECT
+class NetworkedMultiplayerBt : public NetworkedMultiplayerPeer {
 	GDCLASS(NetworkedMultiplayerBt, NetworkedMultiplayerPeer);
 
 private:
-	//QApplication *app;
-	//int _argc = 1;
-	//char **_argv;
+	BluetoothModule module;
 	bool active;
 	bool server;
 
@@ -54,9 +50,6 @@ private:
 
 protected:
 	static void _bind_methods();
-
-signals:
-    void finished();
 
 public:
 	//TODO: remove
