@@ -12,10 +12,10 @@
 ### 💾 Setup:
 #### via submodule
 1. `git clone --recursive https://github.com/godotengine/godot.git`
-2. open a terminal, `cd godot`, and run the following commands:
-`cd modules`
-`git submodule add https://github.com/GreenDjango/godot-bluetooth.git bluetooth`
-`git submodule update --init --recursive`
+2. open a terminal, `cd godot`, and run the following commands:  
+`cd modules`  
+`git submodule add https://github.com/GreenDjango/godot-bluetooth.git bluetooth`  
+`git submodule update --init --recursive` 
 
 #### via download
 1. Download a [godot source code release](https://github.com/godotengine/godot/releases)
