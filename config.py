@@ -1,5 +1,6 @@
 def can_build(env, platform):
-    return (platform == "x11" or platform == "windows" or platform == "osx" or platform == "android")
+    return (platform == "x11")
+    # for futur: or platform == "windows" or platform == "osx" or platform == "android"
 
 
 def configure(env):
@@ -8,6 +9,7 @@ def configure(env):
 
 def get_doc_classes():
     return [
+        "Bluetooth",
         "NetworkedMultiplayerBt",
     ]
 

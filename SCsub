@@ -1,0 +1,27 @@
+#!/usr/bin/env python
+
+Import("env")
+Import("env_modules")
+
+env_bluetooth = env_modules.Clone()
+
+# Treat bluetooth headers as system headers to avoid raising warnings. Not supported on MSVC.
+# if not env.msvc:
+#     env_bluetooth.Append(CPPFLAGS=["-isystem", Dir(thirdparty_dir).path])
+# else:
+#     env_bluetooth.Prepend(CPPPATH=["src"])
+
+env_bluetooth.Prepend(CPPPATH=["src"])
+
+env_bluetooth.Append(
+    CPPDEFINES=["GODOT_BLUETOOTH"],
+    CXXFLAGS=["-std=c++17", "-std=gnu++17"]
+)
+
+module_obj = []
+
+env_bluetooth.add_source_files(module_obj, "src/*.cpp")
+env_bluetooth.add_source_files(module_obj, "*.cpp")
+env.modules_sources += module_obj
+
+env.Append(LIBS=["sdbus-c++"])
