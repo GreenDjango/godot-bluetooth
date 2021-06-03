@@ -1,6 +1,6 @@
 # <img src="icons/icon_bluetooth.svg" alt="GGJ icon" width="50" style="margin-bottom: -6px;"/> Bluetooth Module
 
-### [Bluetooth®](https://www.bluetooth.com) module for godot
+### (WIP) [Bluetooth®](https://www.bluetooth.com) module for godot
 
 |**Platform**|**Support**|**Dependencies**|
 |---:|:---:|---:|
