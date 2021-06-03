@@ -25,7 +25,8 @@ NAME_BINARY		:= test.out
 # ---
 #	set all compil file
 # ---
-SRC_FILES		:= $(wildcard $(SRC_DIR)/*.cpp)
+SRC_FILES		:= $(wildcard $(SRC_DIR)/*.cpp) \
+					$(SRC_DIR)/module/bluetooth_bluez.cpp
 
 
 # ---
