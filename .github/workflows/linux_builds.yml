@@ -1,0 +1,194 @@
+name: 🐧 Linux Builds
+on: [push, pull_request]
+
+# CREDITS:
+# https://github.com/Calinou/godot-builds-ci
+# https://github.com/godotengine/godot
+
+# Global Settings
+env:
+  SCONSFLAGS: platform=linuxbsd progress=no verbose=no warnings=no werror=no debug_symbols=no --jobs=2 -s
+  SCONS_CACHE_LIMIT: 4096
+  # The build name to use instead of "custom_build"
+  # This helps people identify where the build comes from
+  BUILD_NAME: greendjango.${{github.sha}}
+  GODOT_REPO: godotengine/godot
+  GODOT_REPO_TAG: 3.3.2-stable
+  GODOT_BASE_BRANCH: 3.x
+
+jobs:
+  # Built on Ubuntu 16.04 so that binaries run on old distributions as well
+  linux-builds:
+    if: startsWith(github.event.commits[0].message, 'Release')
+    runs-on: ubuntu-16.04
+    name: Linux Editor and Templates
+    env:
+      DEBIAN_FRONTEND: noninteractive
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          repository: ${{env.GODOT_REPO}}
+          ref: ${{env.GODOT_REPO_TAG}}
+      - uses: actions/checkout@v2
+        with:
+          path: modules/bluetooth
+
+      # Azure repositories are not reliable, we need to prevent Azure giving us packages.
+      - name: Make apt sources.list use the default Ubuntu repositories
+        run: |
+          sudo rm -f /etc/apt/sources.list.d/*
+          sudo cp -f misc/ci/sources.list /etc/apt/sources.list
+          sudo apt-get update -qq
+      - name: Use recent GCC provided by the Ubuntu Toolchain PPA
+        run: |
+          sudo apt-get install -qqq software-properties-common
+          sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
+          sudo apt-get update -qq
+      # Install all packages (except scons)
+      - name: Configure dependencies
+        run: |
+          sudo apt-get install --no-install-recommends -qq \
+            build-essential pkg-config libx11-dev libxcursor-dev \
+            libxinerama-dev libgl1-mesa-dev libglu-dev libasound2-dev libpulse-dev \
+            libudev-dev libxi-dev libxrandr-dev yasm xvfb wget2 unzip gcc-9 g++-9
+      # Upload cache on completion and check it out now
+      - name: Load .scons_cache directory
+        id: linux-editor-cache
+        uses: actions/cache@v2
+        with:
+          path: ${{github.workspace}}/.scons_cache/
+          key: ${{github.job}}-${{env.GODOT_BASE_BRANCH}}-${{env.GODOT_REPO_TAG}}-${{github.sha}}
+          restore-keys: |
+            ${{github.job}}-${{env.GODOT_BASE_BRANCH}}-${{env.GODOT_REPO_TAG}}-${{github.sha}}
+            ${{github.job}}-${{env.GODOT_BASE_BRANCH}}-${{env.GODOT_REPO_TAG}}
+            ${{github.job}}-${{env.GODOT_BASE_BRANCH}}
+      # Use python 3.x release (works cross platform; best to keep self contained in it's own step)
+      - name: Set up Python 3.x
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+          architecture: 'x64'
+      # Setup scons, print python version and scons version info, so if anything is broken it won't run the build.
+      - name: Configuring Python packages
+        run: |
+          python -c "import sys; print(sys.version)"
+          python -m pip install scons
+          python --version
+          scons --version
+      - name: Compilation, Editor (target=release_debug, tools=yes)
+        env:
+          SCONS_CACHE: ${{github.workspace}}/.scons_cache/
+        run: |
+          scons tools=yes target=release_debug udev=yes \
+              use_static_cpp=yes CC="gcc-9" CXX="g++-9"
+      - name: Compilation, Template (target=release_debug, tools=no)
+        env:
+          SCONS_CACHE: ${{github.workspace}}/.scons_cache/
+        run: |
+          scons tools=no target=release_debug udev=yes \
+              use_static_cpp=yes CC="gcc-9" CXX="g++-9"
+      - name: Compilation, Template (target=release, tools=no)
+        env:
+          SCONS_CACHE: ${{github.workspace}}/.scons_cache/
+        run: |
+          scons tools=no target=release udev=yes \
+              use_static_cpp=yes CC="gcc-9" CXX="g++-9"
+      - name: Tar binaries
+        run: |
+          ls -la bin/
+          strip bin/godot.*
+          chmod a+x bin/godot.*
+          mv bin/godot.x11.opt.tools.64 Godot_v"$GODOT_REPO_TAG"_x11.64
+          mv bin/godot.x11.opt.debug.64 linux_x11_64_debug
+          mv bin/godot.x11.opt.64 linux_x11_64_release
+          tar -cvf editor.tar Godot_v*
+          tar -cvf template.tar linux_*
+      - name: 'Upload Editor Artifact'
+        uses: actions/upload-artifact@v2
+        with:
+          name: linux-editor
+          path: editor.tar
+          retention-days: 30
+      - name: 'Upload Template Artifact'
+        uses: actions/upload-artifact@v2
+        with:
+          name: linux-template
+          path: template.tar
+          retention-days: 30
+
+  linux-editor-sanitizers:
+    runs-on: ubuntu-20.04
+    name: Editor and exported project with sanitizers (target=debug/release, tools=yes/no, use_ubsan=yes, use_asan=yes)
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          repository: ${{env.GODOT_REPO}}
+          ref: ${{env.GODOT_REPO_TAG}}
+      - uses: actions/checkout@v2
+        with:
+          path: modules/bluetooth
+
+      - name: Make apt sources.list use the default Ubuntu repositories
+        run: |
+          sudo rm -f /etc/apt/sources.list.d/*
+          sudo cp -f misc/ci/sources.list /etc/apt/sources.list
+          sudo apt-get update
+      # Install all packages (except scons)
+      - name: Configure dependencies
+        run: |
+          sudo apt-get install build-essential pkg-config libx11-dev libxcursor-dev \
+            libxinerama-dev libgl1-mesa-dev libglu-dev libasound2-dev libpulse-dev libudev-dev libxi-dev libxrandr-dev yasm \
+            xvfb wget2 unzip
+      # Upload cache on completion and check it out now
+      - name: Load .scons_cache directory
+        id: linux-sanitizer-cache
+        uses: actions/cache@v2
+        with:
+          path: ${{github.workspace}}/.scons_cache/
+          key: ${{github.job}}-${{env.GODOT_BASE_BRANCH}}-${{env.GODOT_REPO_TAG}}-${{github.sha}}
+          restore-keys: |
+            ${{github.job}}-${{env.GODOT_BASE_BRANCH}}-${{env.GODOT_REPO_TAG}}-${{github.sha}}
+            ${{github.job}}-${{env.GODOT_BASE_BRANCH}}-${{env.GODOT_REPO_TAG}}
+            ${{github.job}}-${{env.GODOT_BASE_BRANCH}}
+      # Use python 3.x release (works cross platform; best to keep self contained in it's own step)
+      - name: Set up Python 3.x
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+          architecture: 'x64'
+      # Setup scons, print python version and scons version info, so if anything is broken it won't run the build.
+      - name: Configuring Python packages
+        run: |
+          python -c "import sys; print(sys.version)"
+          python -m pip install scons
+          python --version
+          scons --version
+      # We should always be explicit with our flags usage here since it's gonna be sure to always set those flags
+      - name: Compilation
+        env:
+          SCONS_CACHE: ${{github.workspace}}/.scons_cache/
+        run: |
+          scons tools=yes target=debug use_asan=yes use_ubsan=yes
+          ls -l bin/
+      # Download and test project to check leaks and invalid memory usage.
+      # CI has no audio device, so use the Dummy audio driver to avoid spurious error messages.
+      - name: Importing and running project project
+        run: |
+          wget2 https://github.com/qarmin/RegressionTestProject/archive/3.x.zip
+          unzip 3.x.zip
+          mv "RegressionTestProject-3.x" "test_project"
+          echo "----- Open editor to check for memory leaks -----"
+          DRI_PRIME=0 xvfb-run bin/godot.x11.tools.64s --audio-driver Dummy -e -q --path test_project 2>&1 | tee sanitizers_log.txt || true
+          misc/scripts/check_ci_log.py sanitizers_log.txt
+          echo "----- Run and test project -----"
+          DRI_PRIME=0 xvfb-run bin/godot.x11.tools.64s 30 --video-driver GLES3 --audio-driver Dummy --path test_project 2>&1 | tee sanitizers_log.txt || true
+          misc/scripts/check_ci_log.py sanitizers_log.txt
+      # Check class reference
+      - name: Check for class reference updates
+        run: |
+          echo "Running --doctool to see if this changes the public API without updating the documentation."
+          echo -e "If a diff is shown, it means that your code/doc changes are incomplete and you should update the class reference with --doctool.\n\n"
+          DRI_PRIME=0 xvfb-run bin/godot.x11.tools.64s --doctool . 2>&1 > /dev/null || true
+          git diff --color --exit-code

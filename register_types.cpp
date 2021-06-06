@@ -7,7 +7,8 @@
 
 #include "register_types.h"
 #include "core/class_db.h"
-#include "src/bluetooth_module.h"
+
+#include "bluetooth_module.h"
 
 void register_bluetooth_types() {
 	ClassDB::register_class<Bluetooth>();

@@ -5,23 +5,43 @@ Import("env_modules")
 
 env_bluetooth = env_modules.Clone()
 
+# Thirdparty source files
+
+thirdparty_dir = "src/"
+thirdparty_obj = []
+thirdparty_sources = []
+if env["platform"] == "x11":
+    thirdparty_sources += [
+        "bluetooth_bluez.cpp",
+    ]
+thirdparty_sources = [thirdparty_dir + file for file in thirdparty_sources]
+
 # Treat bluetooth headers as system headers to avoid raising warnings. Not supported on MSVC.
 # if not env.msvc:
 #     env_bluetooth.Append(CPPFLAGS=["-isystem", Dir(thirdparty_dir).path])
 # else:
 #     env_bluetooth.Prepend(CPPPATH=["src"])
-
-env_bluetooth.Prepend(CPPPATH=["src"])
-
+env_bluetooth.Prepend(CPPPATH=[thirdparty_dir])
 env_bluetooth.Append(
     CPPDEFINES=["GODOT_BLUETOOTH"],
     CXXFLAGS=["-std=c++17", "-std=gnu++17"]
 )
 
+env_thirdparty = env_bluetooth.Clone()
+# env_thirdparty.disable_warnings()
+env_thirdparty.add_source_files(thirdparty_obj, thirdparty_sources)
+env.modules_sources += thirdparty_obj
+
+# Godot source files
+
 module_obj = []
 
-env_bluetooth.add_source_files(module_obj, "src/*.cpp")
 env_bluetooth.add_source_files(module_obj, "*.cpp")
 env.modules_sources += module_obj
 
+# Needed to force rebuilding the module files when the thirdparty library is updated.
+env.Depends(module_obj, thirdparty_obj)
+
 env.Append(LIBS=["sdbus-c++"])
+
+# from pprint import pprint; pprint(vars(env))

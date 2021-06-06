@@ -9,7 +9,7 @@
 #define BLUETOOTH_MODULE_H
 
 #include "scene/main/node.h"
-#include "bluez.h"
+#include <bluetooth_wrapper.h>
 
 class Bluetooth : public Node {
 	GDCLASS(Bluetooth, Node);
@@ -24,6 +24,9 @@ protected:
 public:
 	void set_powered(const bool enable) const;
 	bool is_powered() const;
+	String get_name() const;
+	String get_alias() const;
+	String get_address() const;
 
 	Bluetooth();
 };
