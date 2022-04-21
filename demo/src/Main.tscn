@@ -79,14 +79,12 @@ __meta__ = {
 }
 
 [node name="Test" type="Label" parent="GridContainer"]
-margin_left = 755.0
-margin_top = 360.0
-margin_right = 783.0
-margin_bottom = 391.0
+margin_left = 769.0
+margin_top = 368.0
+margin_right = 769.0
+margin_bottom = 382.0
 size_flags_horizontal = 6
 size_flags_vertical = 6
-text = "TEST
-"
 
 [node name="Space3" type="Control" parent="GridContainer"]
 margin_left = 255.0
@@ -100,6 +98,9 @@ __meta__ = {
 }
 
 [node name="Bluetooth" type="Bluetooth" parent="."]
-powered = false
+
+[node name="Timer" type="Timer" parent="."]
+one_shot = true
+autostart = true
 
 [connection signal="toggled" from="GridContainer/CheckButton" to="." method="_on_CheckButton_toggled"]

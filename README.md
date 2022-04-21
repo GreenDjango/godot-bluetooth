@@ -1,6 +1,6 @@
 # <img src="icons/icon_bluetooth.svg" alt="GGJ icon" width="50" style="margin-bottom: -6px;"/> Bluetooth Module
 
-### (WIP) [Bluetooth®](https://www.bluetooth.com) module for godot
+### (WIP) [Bluetooth®](https://www.bluetooth.com) module for godot 3.x
 
 |**Platform**|**Support**|**Dependencies**|
 |---:|:---:|---:|
@@ -11,18 +11,22 @@
 
 ### 💾 Setup:
 #### via submodule
-1. `git clone --recursive https://github.com/godotengine/godot.git`
+1. `git clone --recursive --single-branch --branch 3.4-stable https://github.com/godotengine/godot.git`
 2. open a terminal, `cd godot`, and run the following commands:  
 `cd modules`  
 `git submodule add https://github.com/GreenDjango/godot-bluetooth.git bluetooth`  
-`git submodule update --init --recursive` 
+`cd ../`  
+`git submodule update --init --recursive`
+
+> You can change `--branch 3.4-stable` to other release like `3.3.4-stable`
 
 #### via download
 1. Download a [godot source code release](https://github.com/godotengine/godot/releases)
 2. Download the zip ([godot-bluetooth-master](https://github.com/GreenDjango/godot-bluetooth/archive/master.zip)) and extract it into the `godot/modules/` folder.
 
 ### 🛠 Building
-[See the official docs](https://docs.godotengine.org/en/latest/development/compiling/) for compilation instructions for every supported platform.
+
+#### From linux
 
 <details>
       <summary>🐧<b>Ubuntu</b> dependencies</summary>
@@ -34,6 +38,23 @@
 
       sudo dnf install sdbus-cpp-devel
 </details>
+<details>
+      <summary>🐧<b>Arch</b> dependencies</summary>
+
+      sudo yay -Syu sdbus-cpp
+</details>
+
+For compiling Godot under Linux or other Unix variants, [the following is required](https://docs.godotengine.org/en/3.4/development/compiling/compiling_for_x11.html#distro-specific-one-liners).
+
+Then, you can use `scons -j8 platform=x11` for start compiling, where `-j8` is the number of threads.
+
+Godot binary is create in the `bin/` folder like `bin/godot.x11.tools.64`.
+
+> If you want to use separate editor settings for your own Godot builds and official releases, you can enable Self-contained mode by creating a file called `._sc_` or `_sc_` in the `bin/` folder.
+
+#### From other
+
+[See the official docs](https://docs.godotengine.org/en/3.4/development/compiling/) for compilation instructions for every supported platform.
 
 ### 🎮 Godot
 |**Class**|**Description**|**Access**|

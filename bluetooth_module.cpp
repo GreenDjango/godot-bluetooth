@@ -20,7 +20,7 @@ String Bluetooth::get_device_name() const {
 }
 
 String Bluetooth::get_alias() const {
-	return BTwrapper.alias().c_str();
+	return BTwrapper.get_alias().c_str();
 }
 
 String Bluetooth::get_address() const {
