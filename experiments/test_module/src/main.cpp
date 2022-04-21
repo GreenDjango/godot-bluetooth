@@ -15,16 +15,29 @@ int main(int argc, char *argv[])
 	(void)argc;
 	(void)argv;
 
-	BluetoothWrapper BTwrapper;
+	BluetoothWrapper BTwrapper{};
 
 	//BTwrapper.set_powered(false);
 
 	if (BTwrapper.is_powered())
-		std::cout << "ON\n";
+		std::cout << "Bluetooth: ON\n";
 	else
-		std::cout << "OFF\n";
+		std::cout << "Bluetooth: OFF\n";
 
-	std::cout << BTwrapper.address() << " " << BTwrapper.name() << " (" << BTwrapper.alias() << ")\n";
+	std::cout << "Is pairable: " << (BTwrapper.is_pairable() ? "ON": "OFF") << "\n";
+
+	std::cout << BTwrapper.address_type()
+		<< " " << BTwrapper.address()
+		<< " " << BTwrapper.name()
+		<< " (" << BTwrapper.get_alias()
+		<< ")\n";
+	std::cout << "Discovrable: " << (BTwrapper.is_discoverable() ? "YES" : "NO") << "\n";
+	std::cout << "Discovering: " << (BTwrapper.discovering() ? "YES" : "NO") << "\n";
+	//<< " " << BTwrapper.device_class() 
+	// << " " << BTwrapper.get_discoverable_timeout()
+	std::cout << BTwrapper.modalias()
+		// << " " << BTwrapper.get_pairable_timeout()
+		<< "\n";
 
 	return 0;
 }

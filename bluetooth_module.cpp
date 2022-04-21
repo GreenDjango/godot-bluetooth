@@ -15,7 +15,7 @@ bool Bluetooth::is_powered() const {
 	return BTwrapper.is_powered();
 }
 
-String Bluetooth::get_name() const {
+String Bluetooth::get_device_name() const {
 	return BTwrapper.name().c_str();
 }
 
@@ -28,7 +28,7 @@ String Bluetooth::get_address() const {
 }
 
 void Bluetooth::_bind_methods() {
-	ClassDB::bind_method(D_METHOD("get_name"), &Bluetooth::get_name);
+	ClassDB::bind_method(D_METHOD("get_device_name"), &Bluetooth::get_device_name);
 	ClassDB::bind_method(D_METHOD("get_alias"), &Bluetooth::get_alias);
 	ClassDB::bind_method(D_METHOD("get_address"), &Bluetooth::get_address);
 

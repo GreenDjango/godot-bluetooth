@@ -13,6 +13,9 @@ build/
 *.o
 *.obj
 
+# Debug files
+vgcore.*
+
 # Precompiled Headers
 *.gch
 *.pch

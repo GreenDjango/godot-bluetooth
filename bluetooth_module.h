@@ -24,7 +24,7 @@ protected:
 public:
 	void set_powered(const bool enable) const;
 	bool is_powered() const;
-	String get_name() const;
+	String get_device_name() const;
 	String get_alias() const;
 	String get_address() const;
 
