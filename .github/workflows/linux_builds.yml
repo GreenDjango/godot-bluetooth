@@ -13,7 +13,7 @@ env:
   # This helps people identify where the build comes from
   BUILD_NAME: greendjango.${{github.sha}}
   GODOT_REPO: godotengine/godot
-  GODOT_REPO_TAG: 3.3.2-stable
+  GODOT_REPO_TAG: 3.4-stable
   GODOT_BASE_BRANCH: 3.x
 
 jobs:
@@ -52,6 +52,10 @@ jobs:
             build-essential pkg-config libx11-dev libxcursor-dev \
             libxinerama-dev libgl1-mesa-dev libglu-dev libasound2-dev libpulse-dev \
             libudev-dev libxi-dev libxrandr-dev yasm xvfb wget2 unzip gcc-9 g++-9
+      # Install Bluetooth module dependencies
+      - name: Bluetooth module dependencies
+        run: |
+          sudo apt-get install sdbus-c++-dev
       # Upload cache on completion and check it out now
       - name: Load .scons_cache directory
         id: linux-editor-cache
@@ -133,7 +137,7 @@ jobs:
       - name: Make apt sources.list use the default Ubuntu repositories
         run: |
           sudo rm -f /etc/apt/sources.list.d/*
-          sudo cp -f misc/ci/sources.list /etc/apt/sources.list
+          sudo bash -c 'echo "deb http://archive.ubuntu.com/ubuntu/ focal main restricted universe multiverse\ndeb http://archive.ubuntu.com/ubuntu/ focal-updates main restricted universe multiverse\ndeb http://archive.ubuntu.com/ubuntu/ focal-security main restricted universe multiverse\ndeb http://archive.ubuntu.com/ubuntu/ focal-backports main restricted universe multiverse" > /etc/apt/sources.list'
           sudo apt-get update
       # Install all packages (except scons)
       - name: Configure dependencies
@@ -141,6 +145,10 @@ jobs:
           sudo apt-get install build-essential pkg-config libx11-dev libxcursor-dev \
             libxinerama-dev libgl1-mesa-dev libglu-dev libasound2-dev libpulse-dev libudev-dev libxi-dev libxrandr-dev yasm \
             xvfb wget2 unzip
+      # Install Bluetooth module dependencies
+      - name: Bluetooth module dependencies
+        run: |
+          sudo apt-get install sdbus-c++-dev
       # Upload cache on completion and check it out now
       - name: Load .scons_cache directory
         id: linux-sanitizer-cache
