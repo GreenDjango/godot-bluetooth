@@ -81,6 +81,11 @@ jobs:
               libxinerama-dev libgl1-mesa-dev libglu-dev libasound2-dev libpulse-dev \
               libdbus-1-dev libudev-dev libxi-dev libxrandr-dev yasm xvfb wget unzip
 
+      # Install Bluetooth module dependencies
+      - name: Bluetooth module dependencies
+        run: |
+          sudo apt-get install sdbus-c++-dev
+
       # Use Godot repository action
       - name: Setup Godot build cache
         uses: ./.github/actions/godot-cache

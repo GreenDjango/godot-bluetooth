@@ -59,6 +59,7 @@ jobs:
           npm run lint
           npm run docs -- -d dry-run
       - name: Class reference schema checks
+        if: ${{ env.GODOT_BASE_BRANCH > 3.4 }}
         run: |
           xmllint --noout --schema doc/class.xsd doc/classes/*.xml modules/*/doc_classes/*.xml
       - name: Documentation checks
