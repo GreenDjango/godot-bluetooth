@@ -1,0 +1,34 @@
+# Exhaustive licensing information for files in the Godot Bluetooth Module repository
+# =========================================================================
+#
+# This file aims at documenting the copyright and license for every source
+# file in the Godot Bluetooth Module repository, and especially outline the files
+# whose license differs from the MIT/Expat license used by Godot Bluetooth Module.
+#
+# It is written as a machine-readable format following the debian/copyright
+# specification. Globbing patterns (e.g. "Files: *") mean that they affect
+# all corresponding files (also recursively in subfolders), apart from those
+# with a more explicit copyright statement.
+#
+# Licenses are given with their debian/copyright short name (or SPDX identifier
+# if no standard short name exists) and are all included in plain text at the
+# end of this file (in alphabetical order).
+
+-----------------------------------------------------------------------
+
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: Godot Bluetooth Module
+Upstream-Contact: Unknown <contact@unknown.org>
+Source: https://github.com/GreenDjango/godot-bluetooth
+
+Files: *
+Comment: Godot Bluetooth Module
+Copyright: 2020-2022, Godot Bluetooth Module contributors.
+License: Expat
+
+Files: ./icons/icon_bluetooth.svg
+Comment: Bluetooth logo
+Copyright: 2016, Fabián Alexis
+License: CC-BY-3.0
+
+
