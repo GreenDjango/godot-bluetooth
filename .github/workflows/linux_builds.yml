@@ -84,7 +84,7 @@ jobs:
       # Install Bluetooth module dependencies
       - name: Bluetooth module dependencies
         run: |
-          sudo apt-get install sdbus-c++-dev
+          sudo apt-get install libsdbus-c++-dev
 
       # Use Godot repository action
       - name: Setup Godot build cache

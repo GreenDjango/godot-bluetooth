@@ -31,7 +31,8 @@
 <details>
       <summary>🐧<b>Ubuntu</b> dependencies</summary>
 
-      sudo apt install sdbus-c++-dev
+      sudo apt install sdbus-c++-dev    # 18
+      sudo apt install libsdbus-c++-dev # 20
 </details>
 <details>
       <summary>🐧<b>Fedora</b> dependencies</summary>
