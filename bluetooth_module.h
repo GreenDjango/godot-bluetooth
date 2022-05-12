@@ -27,7 +27,7 @@ public:
 	String get_device_name() const;
 	String get_alias() const;
 	String get_address() const;
-	HashMap<String, String> list_devices() const;
+	Dictionary list_devices() const;
 
 	Bluetooth();
 };
