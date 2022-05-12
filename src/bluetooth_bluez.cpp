@@ -16,14 +16,37 @@
 
 const char* bluezName = "org.bluez";
 const char* bluezPath = "/org/bluez";
+const char* rootPath = "/";
 const char* hciPath = "/org/bluez/hci0";
 const char* AdapterInterface = "org.bluez.Adapter1";
+const char* ObjectManagerInterface = "org.freedesktop.DBus.ObjectManager";
 
 BluetoothWrapper::BluetoothWrapper() {
+	rootProxy = std::move(sdbus::createProxy(bluezName, rootPath));
 	hciProxy = std::move(sdbus::createProxy(bluezName, hciPath));
 }
 
-// /org/bluez/hci0
+// Path /
+
+sdbus::Variant BluetoothWrapper::call_root_method(const std::string& methodName,const std::string& interfaceName) const {
+	std::string concatenatedString;
+	rootProxy->callMethod(methodName).onInterface(interfaceName).withArguments().storeResultsTo(concatenatedString);
+	return concatenatedString;
+}
+
+// Object org.bluez.Adapter1
+/// manager = dbus.Interface(bus.get_object("org.bluez", "/"), "org.freedesktop.DBus.ObjectManager")
+
+std::map<std::string, std::string> BluetoothWrapper::list_devices() const {
+	auto methodName = std::string("GetManagedObjects");
+
+	auto data = call_root_method(methodName, ObjectManagerInterface);
+
+	std::cout << data.get<std::string>() << "\n";
+	return std::map<std::string, std::string>();
+}
+
+// Path /org/bluez/hci0
 
 sdbus::Variant BluetoothWrapper::get_hci_value(const std::string& propertyName, std::string interfaceName) const {
 	return hciProxy->getProperty(propertyName).onInterface(interfaceName);
@@ -33,7 +56,7 @@ void BluetoothWrapper::set_hci_value(const std::string& propertyName, std::strin
 	return hciProxy->setProperty(propertyName).onInterface(interfaceName).toValue(value);
 }
 
-// org.bluez.Adapter1
+// Object org.bluez.Adapter1
 
 std::string BluetoothWrapper::address() const {
 	auto address = get_hci_value("Address", AdapterInterface);

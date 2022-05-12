@@ -15,16 +15,21 @@
 class BluetoothWrapper {
 
 private:
-	// /org/bluez/hci0
+	// Path /
+	std::unique_ptr<sdbus::IProxy> rootProxy;
+	sdbus::Variant call_root_method(const std::string& methodName,const std::string& interfaceName) const;
+	// Path /org/bluez/hci0
 	std::unique_ptr<sdbus::IProxy> hciProxy;
 	sdbus::Variant get_hci_value(const std::string& propertyName, std::string interfaceName) const;
 	void set_hci_value(const std::string& propertyName, std::string interfaceName, const sdbus::Variant& value) const;
 
-
 public:
 	BluetoothWrapper();
 
-	// org.bluez.Adapter1
+	// Object org.freedesktop.DBus.ObjectManager
+	std::map<std::string, std::string> list_devices() const;
+
+	// Object org.bluez.Adapter1
 	std::string address() const;
 	std::string address_type() const;
 	void set_alias(const std::string& alias) const;

@@ -37,7 +37,9 @@ int main(int argc, char *argv[])
 	// << " " << BTwrapper.get_discoverable_timeout()
 	std::cout << BTwrapper.modalias()
 		// << " " << BTwrapper.get_pairable_timeout()
-		<< "\n";
+		<< "\n\n";
+
+	BTwrapper.list_devices();
 
 	return 0;
 }
