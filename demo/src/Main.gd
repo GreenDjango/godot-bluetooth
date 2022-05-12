@@ -12,3 +12,11 @@ func _process(_delta):
 
 func _on_CheckButton_toggled(button_pressed):
 	$Bluetooth.powered = button_pressed
+	
+func _on_CheckButton2_pressed():
+	# var res := {'a':'b','c':'d'}
+	$GridContainer/CheckButton2/RichTextLabel.text = ""
+	var dev = $Bluetooth.list_devices()
+	for i in dev:
+		# prints(i, res[i])
+		$GridContainer/CheckButton2/RichTextLabel.bbcode_text += "[u]{key}[/u]: {value}\n".format({"key":i,"value":dev[i]})
