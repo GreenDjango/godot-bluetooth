@@ -27,6 +27,16 @@ String Bluetooth::get_address() const {
 	return BTwrapper.address().c_str();
 }
 
+HashMap<String, String> Bluetooth::list_devices() const {
+	auto devices_list = HashMap<String, String>();
+	auto raw_device_list = BTwrapper.list_devices();
+
+	for (auto it = raw_device_list.begin(); it != raw_device_list.end(); ++it) {
+		devices_list[it->first.c_str()] = it->second.c_str();
+	}
+	return devices_list;
+}
+
 void Bluetooth::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_device_name"), &Bluetooth::get_device_name);
 	ClassDB::bind_method(D_METHOD("get_alias"), &Bluetooth::get_alias);
@@ -34,6 +44,8 @@ void Bluetooth::_bind_methods() {
 
 	ClassDB::bind_method(D_METHOD("set_powered", "enable"), &Bluetooth::set_powered);
 	ClassDB::bind_method(D_METHOD("is_powered"), &Bluetooth::is_powered);
+
+	ClassDB::bind_method(D_METHOD("list_devices"), &Bluetooth::list_devices);
 
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "powered"), "set_powered", "is_powered");
 }

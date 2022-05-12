@@ -39,7 +39,11 @@ int main(int argc, char *argv[])
 		// << " " << BTwrapper.get_pairable_timeout()
 		<< "\n\n";
 
-	BTwrapper.list_devices();
+	auto devices_list = BTwrapper.list_devices();
+	for (auto it = devices_list.begin(); it != devices_list.end(); ++it)
+	{
+		std::cout << it->first << " | " << it->second << "\n";
+	}
 
 	return 0;
 }

@@ -28,22 +28,41 @@ BluetoothWrapper::BluetoothWrapper() {
 
 // Path /
 
-sdbus::Variant BluetoothWrapper::call_root_method(const std::string& methodName,const std::string& interfaceName) const {
-	std::string concatenatedString;
-	rootProxy->callMethod(methodName).onInterface(interfaceName).withArguments().storeResultsTo(concatenatedString);
-	return concatenatedString;
+typedef std::map<std::string, sdbus::Variant> VariantMap;
+typedef std::map<std::string, VariantMap> VariantMapMap;
+typedef std::map<sdbus::ObjectPath, VariantMapMap> VariantMapMapPath;
+
+template<typename T> 
+T BluetoothWrapper::call_root_method(const std::string& methodName,const std::string& interfaceName) const {
+	T resultValue;
+	rootProxy->callMethod(methodName).onInterface(interfaceName).withArguments().storeResultsTo(resultValue);
+	return resultValue;
 }
 
 // Object org.bluez.Adapter1
-/// manager = dbus.Interface(bus.get_object("org.bluez", "/"), "org.freedesktop.DBus.ObjectManager")
 
 std::map<std::string, std::string> BluetoothWrapper::list_devices() const {
 	auto methodName = std::string("GetManagedObjects");
 
-	auto data = call_root_method(methodName, ObjectManagerInterface);
+	auto data = call_root_method<VariantMapMapPath>(methodName, ObjectManagerInterface);
+	auto devices_list = std::map<std::string, std::string>();
 
-	std::cout << data.get<std::string>() << "\n";
-	return std::map<std::string, std::string>();
+	for (VariantMapMapPath::iterator it = data.begin(); it != data.end(); ++it) {
+		// std::cout << it->first << " => " << '\n';
+		for (VariantMapMap::iterator yt = it->second.begin(); yt != it->second.end(); ++yt) {
+			if (yt->second.count("Address") == 1 && yt->second.count("Name") == 1) {
+				auto address = yt->second.at("Address").get<std::string>();
+				auto name = yt->second.at("Name").get<std::string>();
+				devices_list[address] = name;
+				// for (VariantMap::iterator xt = yt->second.begin(); xt != yt->second.end(); ++xt) {
+				// 	 if (xt->second.peekValueType() == "s")
+				// 		std::cout << "  " << xt->first << " => " << xt->second.get<std::string>() << '\n';
+				// }
+			}
+		}
+	}
+
+	return devices_list;
 }
 
 // Path /org/bluez/hci0
