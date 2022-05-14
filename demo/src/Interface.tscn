@@ -1,0 +1,127 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://src/Interface.gd" type="Script" id=1]
+
+[node name="Interface" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_bottom = -256.0
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_lock_": true,
+"_edit_use_anchors_": false
+}
+
+[node name="GridContainer" type="GridContainer" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+columns = 2
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="CheckButton" type="CheckButton" parent="GridContainer"]
+margin_left = 315.0
+margin_top = 58.0
+margin_right = 450.0
+margin_bottom = 98.0
+mouse_default_cursor_shape = 2
+size_flags_horizontal = 6
+size_flags_vertical = 6
+text = "Powered"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="CheckButton2" type="Button" parent="GridContainer"]
+margin_left = 1109.0
+margin_top = 68.0
+margin_right = 1196.0
+margin_bottom = 88.0
+mouse_default_cursor_shape = 2
+size_flags_horizontal = 6
+size_flags_vertical = 6
+text = "Scan device"
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="RichTextLabel" type="RichTextLabel" parent="GridContainer/CheckButton2"]
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+margin_left = -150.0
+margin_top = 20.0
+margin_right = 150.0
+margin_bottom = 300.0
+focus_mode = 2
+bbcode_enabled = true
+scroll_following = true
+selection_enabled = true
+__meta__ = {
+"_edit_lock_": true,
+"_edit_use_anchors_": false
+}
+
+[node name="DeviceName" type="Label" parent="GridContainer"]
+margin_left = 337.0
+margin_top = 232.0
+margin_right = 429.0
+margin_bottom = 246.0
+size_flags_horizontal = 6
+size_flags_vertical = 6
+text = "Device name: "
+
+[node name="Space1" type="Control" parent="GridContainer"]
+margin_left = 1153.0
+margin_top = 239.0
+margin_right = 1153.0
+margin_bottom = 239.0
+size_flags_horizontal = 6
+size_flags_vertical = 6
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Address" type="Label" parent="GridContainer"]
+margin_left = 353.0
+margin_top = 393.0
+margin_right = 413.0
+margin_bottom = 407.0
+size_flags_horizontal = 6
+size_flags_vertical = 6
+text = "Address: "
+
+[node name="Space2" type="Control" parent="GridContainer"]
+margin_left = 1153.0
+margin_top = 400.0
+margin_right = 1153.0
+margin_bottom = 400.0
+size_flags_horizontal = 6
+size_flags_vertical = 6
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Test" type="Label" parent="GridContainer"]
+margin_left = 383.0
+margin_top = 554.0
+margin_right = 383.0
+margin_bottom = 568.0
+size_flags_horizontal = 6
+size_flags_vertical = 6
+
+[node name="Space3" type="Control" parent="GridContainer"]
+margin_left = 1153.0
+margin_top = 561.0
+margin_right = 1153.0
+margin_bottom = 561.0
+size_flags_horizontal = 6
+size_flags_vertical = 6
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[connection signal="toggled" from="GridContainer/CheckButton" to="." method="_on_CheckButton_toggled"]
+[connection signal="pressed" from="GridContainer/CheckButton2" to="." method="_on_CheckButton2_pressed"]
