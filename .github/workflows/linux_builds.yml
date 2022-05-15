@@ -60,7 +60,7 @@ jobs:
             target: release_debug
             tools: false
             sconsflags: debug_symbols=no
-            32bits: true
+            build-32bits: true
             artifact: true
 
           - name: Template (target=release, tools=no)
@@ -68,7 +68,7 @@ jobs:
             target: release
             tools: false
             sconsflags: debug_symbols=no
-            32bits: true
+            build-32bits: true
             artifact: true
 
     steps:
@@ -119,7 +119,7 @@ jobs:
 
       # Use Godot repository action
       - name: Compilation (32 bits)
-        if: ${{ matrix.32bits }}
+        if: ${{ matrix.build-32bits }}
         uses: ./.github/actions/godot-build
         with:
           sconsflags: ${{ env.SCONSFLAGS }} ${{ matrix.sconsflags }} bits=32

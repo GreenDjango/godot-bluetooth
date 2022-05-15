@@ -52,6 +52,7 @@ jobs:
           bash ./misc/scripts/clang_format.sh
 
       - name: Python style checks via black (black_format.sh)
+        if: ${{ env.GODOT_BASE_BRANCH > 3.4 }}
         run: |
           bash ./misc/scripts/black_format.sh
 
