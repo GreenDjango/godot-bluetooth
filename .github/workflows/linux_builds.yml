@@ -1,15 +1,19 @@
 # CREDITS:
 # https://github.com/Calinou/godot-builds-ci
 # https://github.com/godotengine/godot
+# https://github.com/Zylann/godot_voxel
 
 name: 🐧 Linux Builds
-on: [push, pull_request]
+on:
+  push:
+    branches: [ master, github_actions ]
+  pull_request:
+    branches: [ master ]
+
 
 # Global Settings
 env:
   SCONSFLAGS: verbose=yes warnings=all werror=yes
-  # SCONSFLAGS: platform=linuxbsd progress=no verbose=no warnings=no werror=no debug_symbols=no --jobs=2 -s
-  # SCONS_CACHE_LIMIT: 4096
   # The build name to use instead of "custom_build"
   # This helps people identify where the build comes from
   BUILD_NAME: greendjango.${{github.sha}}
@@ -32,14 +36,14 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          # - name: Editor w/ Mono (target=release_debug, tools=yes)
-          #   cache-name: linux-editor-mono
-          #   target: release_debug
-          #   tools: true
-          #   sconsflags: module_mono_enabled=yes mono_static=yes mono_glue=no
-          #   bin: "./bin/godot.x11.opt.tools.64.mono"
-          #   build-mono: true
-          #   artifact: true
+          - name: Editor (target=release_debug, tools=yes)
+            cache-name: linux-editor
+            target: release_debug
+            tools: true
+            sconsflags: ""
+            bin: "./bin/godot.x11.opt.tools.64"
+            # godot.<platform>.[opt].[tools/debug].<architecture>[extension]
+            artifact: true
 
           - name: Editor and sanitizers (target=debug, tools=yes, use_asan=yes, use_ubsan=yes)
             cache-name: linux-editor-sanitizers
@@ -48,17 +52,24 @@ jobs:
             sconsflags: use_asan=yes use_ubsan=yes
             test: true
             bin: "./bin/godot.x11.tools.64s"
-            build-mono: false
             # Skip 2GiB artifact speeding up action.
             artifact: false
 
-          # - name: Template w/ Mono (target=release, tools=no)
-          #   cache-name: linux-template-mono
-          #   target: release
-          #   tools: false
-          #   sconsflags: module_mono_enabled=yes mono_static=yes mono_glue=no debug_symbols=no
-          #   build-mono: false
-          #   artifact: true
+          - name: Template (target=release, tools=no)
+            cache-name: linux-template-debug
+            target: release_debug
+            tools: false
+            sconsflags: debug_symbols=no
+            32bits: true
+            artifact: true
+
+          - name: Template (target=release, tools=no)
+            cache-name: linux-template-release
+            target: release
+            tools: false
+            sconsflags: debug_symbols=no
+            32bits: true
+            artifact: true
 
     steps:
       - uses: actions/checkout@v3
@@ -98,25 +109,20 @@ jobs:
         uses: ./.github/actions/godot-deps
 
       # Use Godot repository action
-      - name: Compilation
+      - name: Compilation (64 bits)
         uses: ./.github/actions/godot-build
         with:
-          sconsflags: ${{ env.SCONSFLAGS }} ${{ matrix.sconsflags }}
+          sconsflags: ${{ env.SCONSFLAGS }} ${{ matrix.sconsflags }} bits=64
           platform: linuxbsd
           target: ${{ matrix.target }}
           tools: ${{ matrix.tools }}
 
-      # Generate mono glue
-      - name: Generate Mono glue code
-        if: ${{ matrix.build-mono }}
-        run: |
-          DRI_PRIME=0 xvfb-run ${{ matrix.bin }} --generate-mono-glue modules/mono/glue || true
-      # Rebuild with mono
-      - name: Compilation (mono_glue=yes)
+      # Use Godot repository action
+      - name: Compilation (32 bits)
+        if: ${{ matrix.32bits }}
         uses: ./.github/actions/godot-build
-        if: ${{ matrix.build-mono }}
         with:
-          sconsflags: ${{ env.SCONSFLAGS }} ${{ matrix.sconsflags }} mono_glue=yes
+          sconsflags: ${{ env.SCONSFLAGS }} ${{ matrix.sconsflags }} bits=32
           platform: linuxbsd
           target: ${{ matrix.target }}
           tools: ${{ matrix.tools }}
@@ -133,13 +139,14 @@ jobs:
         if: ${{ matrix.test }}
         run: |
           DRI_PRIME=0 xvfb-run ${{ matrix.bin }} --audio-driver Dummy -e -q --path test_project 2>&1 | tee sanitizers_log.txt || true
-          misc/scripts/check_ci_log.py sanitizers_log.txt
+          ./misc/scripts/check_ci_log.py sanitizers_log.txt
       # Run test project
       - name: Run project
         if: ${{ matrix.test }}
         run: |
           DRI_PRIME=0 xvfb-run ${{ matrix.bin }} 30 --video-driver GLES3 --audio-driver Dummy --path test_project 2>&1 | tee sanitizers_log.txt || true
-          misc/scripts/check_ci_log.py sanitizers_log.txt
+          ./misc/scripts/check_ci_log.py sanitizers_log.txt
+
       # Check class reference
       - name: Check for class reference updates
         if: ${{ matrix.test }}
