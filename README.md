@@ -63,6 +63,14 @@ Godot binary is create in the `bin/` folder like `bin/godot.x11.tools.64`.
 |`Bluetooth`|Basic Bluetooth manger (switch BT on, scan nearby device, etc)|Node & GDScrip
 |`NetworkedMultiplayerBt`|its purpose is to provide wrapper methods for all Bluetooth calls with a NetworkedMultiplayerPeer godot type friendly interface.|GDScrip
 
+### 🤝 Setup to contribute
+
+VScode is a good IDE for this project.
+
+You can `git clone` this repository and Godot repository next to each other, and then link module for compile with `scons custom_modules="../modules,/abs/path/to/modules,~/src/godot_modules"` or a symlink in `modules` folder with `ln -s ../../godot-bluetooth bluetooth`.
+
+For style, you need [ms-vscode.cpptools](https://marketplace.visualstudio.com/items?itemName=ms-vscode.cpptools). Next create `.vscode/settings.json` and add this line `{ "C_Cpp.clang_format_style": "file" }`. Or use `clang-format-13` cli without vscode.
+
 ### TODO
 - doc_classes need to be written for GDScript documentation.
 - Provide some other singleton class.
