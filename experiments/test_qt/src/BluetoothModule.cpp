@@ -7,9 +7,9 @@
 
 #include "BluetoothModule.hpp"
 #include "moc_BluetoothModule.cpp"
-#include <QtCore/qdatetime.h>
+#include <QtCore/qelapsedtimer.h>
 
-QTime t;
+QElapsedTimer t;
 
 /// --- ServiceDiscoveryDialog ---
 /*ServiceDiscoveryDialog::ServiceDiscoveryDialog(const QBluetoothAddress& address)
