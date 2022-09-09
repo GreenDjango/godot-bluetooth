@@ -85,7 +85,7 @@ jobs:
         run: |
           # Azure repositories are not reliable, we need to prevent azure giving us packages.
           sudo rm -f /etc/apt/sources.list.d/*
-          sudo cp -f ./misc/ci/sources.list /etc/apt/sources.list
+          sudo cp -f ./modules/bluetooth/.github/misc/sources.list /etc/apt/sources.list
           sudo apt-get update
           # The actual dependencies
           sudo apt-get --no-install-recommends install build-essential pkg-config \
