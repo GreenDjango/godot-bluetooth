@@ -28,7 +28,7 @@ concurrency:
 jobs:
   build-linux:
     # if: startsWith(github.event.commits[0].message, 'Release')
-    runs-on: "ubuntu-20.04"
+    runs-on: "ubuntu-22.04"
     name: ${{ matrix.name }}
     env:
       DEBIAN_FRONTEND: noninteractive
