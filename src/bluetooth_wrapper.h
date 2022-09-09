@@ -1,63 +1,25 @@
-/*
-** GODOT PROJECT, 2020
-** bluetooth wrapper
-** File description:
-** bluetooth_wrapper.cpp
-*/
+/*****************************************************************************\
+**  bluetooth_wrapper.h
+**
+**  This file is part of the Godot Bluetooth Module project, and is made
+**  available under the terms of the MIT License version.
+**
+**  Copyright (C) 2022 - Godot Bluetooth Module contributors
+\*****************************************************************************/
 
-#ifndef BLUETOOTH_WRAPPER_H
+#if !defined(BLUETOOTH_WRAPPER_H)
 #define BLUETOOTH_WRAPPER_H
 
-#include <string>
-#include <vector>
-#include <sdbus-c++/sdbus-c++.h>
+#if defined(GODOT_BLUETOOTH_P_X11)
 
-class BluetoothWrapper {
+#include "bluetooth_bluez.h"
+using BluetoothWrapper = BluetoothWrapperBluez;
 
-private:
-	// Path /
-	std::unique_ptr<sdbus::IProxy> rootProxy;
-	template<typename T>
-	T call_root_method(const std::string& methodName,const std::string& interfaceName) const;
-	// Path /org/bluez/hci0
-	std::unique_ptr<sdbus::IProxy> hciProxy;
-	sdbus::Variant get_hci_value(const std::string& propertyName, std::string interfaceName) const;
-	void set_hci_value(const std::string& propertyName, std::string interfaceName, const sdbus::Variant& value) const;
+#else
 
-public:
-	BluetoothWrapper();
+#include "bluetooth_dummy.h"
+using BluetoothWrapper = BluetoothWrapperDummy;
 
-	// Object org.freedesktop.DBus.ObjectManager
-	std::map<std::string, std::string> list_devices() const;
-
-	// Object org.bluez.Adapter1
-	std::string address() const;
-	std::string address_type() const;
-	void set_alias(const std::string& alias) const;
-	std::string get_alias() const;
-	// int device_class() const;
-	void set_discoverable(const bool enable) const;
-	bool is_discoverable() const;
-	// void set_discoverable_timeout(const int timeout) const;
-	// int get_discoverable_timeout() const;
-	bool discovering() const;
-	std::string modalias() const;
-	std::string name() const;
-	void set_pairable(const bool enable) const;
-	bool is_pairable() const;
-	// void set_pairable_timeout(const int timeout) const;
-	// int get_pairable_timeout() const;
-	void set_powered(const bool enable) const;
-	bool is_powered() const;
-	// std::vector<std::string> roles() const;
-	// std::vector<std::string> uuids() const;
-
-	// org.bluez.LEAdvertisingManager1
-	// char active_instances() const;
-	// std::vector<std::string> supported_includes() const;
-	// char supported_instances() const;
-};
-
-// typedef std::unique_ptr<Resource> ResourcePtr;
+#endif
 
 #endif // BLUETOOTH_WRAPPER_H

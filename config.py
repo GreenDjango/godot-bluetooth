@@ -1,7 +1,5 @@
 def can_build(env, platform):
-    return (platform == "x11")
-    # for futur: or platform == "windows" or platform == "osx" or platform == "android"
-
+    return (platform != "server")
 
 def configure(env):
     pass

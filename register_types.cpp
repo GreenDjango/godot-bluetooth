@@ -1,9 +1,11 @@
-/*
-** GODOT PROJECT, 2021
-** bluetooth module
-** File description:
-** register_types.cpp
-*/
+/*****************************************************************************\
+**  register_types.cpp
+**
+**  This file is part of the Godot Bluetooth Module project, and is made
+**  available under the terms of the MIT License version.
+**
+**  Copyright (C) 2022 - Godot Bluetooth Module contributors
+\*****************************************************************************/
 
 #include "register_types.h"
 #include "core/class_db.h"

@@ -1,22 +1,23 @@
-/*
-** GODOT PROJECT, 2020
-** bluetooth module
-** File description:
-** bluetooth_module.h
-*/
+/*****************************************************************************\
+**  bluetooth_module.h
+**
+**  This file is part of the Godot Bluetooth Module project, and is made
+**  available under the terms of the MIT License version.
+**
+**  Copyright (C) 2022 - Godot Bluetooth Module contributors
+\*****************************************************************************/
 
 #ifndef BLUETOOTH_MODULE_H
 #define BLUETOOTH_MODULE_H
 
-#include "scene/main/node.h"
+#include "core/reference.h"
 #include <bluetooth_wrapper.h>
 
-class Bluetooth : public Node {
-	GDCLASS(Bluetooth, Node);
+class Bluetooth : public Reference {
+	GDCLASS(Bluetooth, Reference);
 
 private:
 	BluetoothWrapper BTwrapper;
-	bool requesting;
 
 protected:
 	static void _bind_methods();
@@ -27,9 +28,7 @@ public:
 	String get_device_name() const;
 	String get_alias() const;
 	String get_address() const;
-	Dictionary list_devices() const;
-
-	Bluetooth();
+	Array list_devices() const;
 };
 
 #endif // BLUETOOTH_MODULE_H

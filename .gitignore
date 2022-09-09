@@ -1,5 +1,6 @@
 # VS code
-.vscode/
+.vscode/**
+!.vscode/c_cpp_properties.json
 
 # Scons cache
 __pycache__/

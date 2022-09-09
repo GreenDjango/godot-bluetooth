@@ -1,8 +1,12 @@
 #!/usr/bin/make -f
+
 # ---
-#	GODOT PROJECT, 2021
-#	bluetooth module
-#	Author: Theo
+#	Makefile
+#
+#	This file is part of the Godot Bluetooth Module project, and is made
+#	available under the terms of the MIT License version.
+#
+# 	Copyright (C) 2022 - Godot Bluetooth Module contributors
 # ---
 
 # ---
@@ -10,8 +14,10 @@
 # ---
 CC				:= g++
 HEADER_DIR		:= -Iinclude/ -Imodule/
-CFLAGS			:= -Wall -Wextra -W -std=c++17 -std=gnu++17 -g3 $(HEADER_DIR)
-LIBS			:= -lsdbus-c++
+HEADER_LIBS_DIR	:= -isystem /usr/include/qt6 -isystem /usr/include/qt6/QtBluetooth -isystem /usr/include/qt6/QtCore -isystem /usr/include/qt6/QtNetwork -isystem /usr/include/qt6/QtDBus
+DEFINES			:= -DGODOT_BLUETOOTH_P_X11 -DQT_BLUETOOTH_LIB -DQT_CORE_LIB -DQT_DBUS_LIB -DQT_NETWORK_LIB -DQT_NO_DEBUG
+CFLAGS			:= -Wall -Wextra -W -std=c++17 -std=gnu++17 -g3 $(DEFINES) $(HEADER_DIR) $(HEADER_LIBS_DIR)
+LIBS			:= -lQt6Bluetooth -lQt6Core -lQt6Network -lQt6DBus
 BUILD_DIR		:= build
 SRC_DIR			:= src
 VERSION			:= 1.0 # $(shell git show --format="%h" -q)
@@ -26,7 +32,8 @@ NAME_BINARY		:= test.out
 #	set all compil file
 # ---
 SRC_FILES		:= $(wildcard $(SRC_DIR)/*.cpp) \
-					$(SRC_DIR)/module/bluetooth_bluez.cpp
+					$(SRC_DIR)/module/bluetooth_bluez.cpp \
+					$(SRC_DIR)/module/bluetooth_dummy.cpp
 
 
 # ---
@@ -46,7 +53,7 @@ all: $(NAME_BINARY)
 #	main rule
 # ---
 $(NAME_BINARY): $(DEST_OBJ)
-	$(CC) -o $@ $^ $(CFLAGS) $(LIBS)
+	$(CC) -o $@ $^ $(LIBS)
 	@ printf "\33[00;32m%s\33[0m\n" "COMPILING STATUS -> COMPLETE"
 	@ printf "\33[0mCurrent build version: \33[32m[ %s ]\33[0m\n" $(VERSION)
 

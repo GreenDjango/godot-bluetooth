@@ -5,7 +5,7 @@
 |**Platform**|**Support**|**Dependencies**|
 |---:|:---:|---:|
 |🪟 windows|❌|
-|🐧x11|✔️|[sdbus-c++](https://github.com/Kistler-Group/sdbus-cpp) (libsystemd >= 0.20)
+|🐧x11|✔️|[QT6](https://doc.qt.io/qt-6/qtbluetooth-index.html)
 |🍎osx|❌|
 |📱android|❌|
 
@@ -31,23 +31,24 @@
 <details>
       <summary>🐧<b>Ubuntu</b> dependencies</summary>
 
-      sudo apt install sdbus-c++-dev    # 18
-      sudo apt install libsdbus-c++-dev # 20
+      sudo apt install qt6-connectivity-dev
 </details>
 <details>
       <summary>🐧<b>Fedora</b> dependencies</summary>
 
-      sudo dnf install sdbus-cpp-devel
+      sudo dnf install qt6-qtconnectivity-devel
 </details>
 <details>
       <summary>🐧<b>Arch</b> dependencies</summary>
 
-      sudo yay -Syu sdbus-cpp
+      sudo yay -Syu qt6-connectivity
 </details>
 
 For compiling Godot under Linux or other Unix variants, [the following is required](https://docs.godotengine.org/en/3.4/development/compiling/compiling_for_x11.html#distro-specific-one-liners).
 
 Then, you can use `scons -j8 platform=x11` for start compiling, where `-j8` is the number of threads.
+
+> NOTE: use SCONS flags `production=yes tools=yes target=release_debug` for your editor and `production=yes tools=no target=release` for your templates.
 
 Godot binary is create in the `bin/` folder like `bin/godot.x11.tools.64`.
 

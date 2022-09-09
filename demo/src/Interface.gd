@@ -4,6 +4,7 @@ onready var bluetooth := Bluetooth.new()
 onready var timer := Timer.new()
 
 func _ready():
+	timer.one_shot = true
 	add_child(timer)
 	$GridContainer/CheckButton.pressed = bluetooth.powered
 	$GridContainer/DeviceName.text += bluetooth.get_device_name() + ' (' + bluetooth.get_alias() +')'
@@ -12,7 +13,7 @@ func _ready():
 func _process(_delta):
 	if timer.is_stopped():
 		$GridContainer/CheckButton.pressed = bluetooth.powered
-		timer.start()
+		timer.start(2)
 
 func _on_CheckButton_toggled(button_pressed):
 	bluetooth.powered = button_pressed

@@ -18,7 +18,7 @@ env:
   # This helps people identify where the build comes from
   BUILD_NAME: greendjango.${{github.sha}}
   GODOT_REPO: godotengine/godot
-  GODOT_REPO_TAG: 3.4.4-stable
+  GODOT_REPO_TAG: 3.4.5-stable
   GODOT_BASE_BRANCH: 3.4
 
 concurrency:
@@ -40,7 +40,7 @@ jobs:
             cache-name: linux-editor
             target: release_debug
             tools: true
-            sconsflags: ""
+            sconsflags: production=yes
             bin: "./bin/godot.x11.opt.tools.64"
             # godot.<platform>.[opt].[tools/debug].<architecture>[extension]
             artifact: true
@@ -88,15 +88,15 @@ jobs:
           sudo cp -f ./misc/ci/sources.list /etc/apt/sources.list
           sudo apt-get update
           # The actual dependencies
-          sudo apt-get install build-essential pkg-config libx11-dev libxcursor-dev \
-              libxinerama-dev libgl1-mesa-dev libglu-dev libasound2-dev libpulse-dev \
-              libdbus-1-dev libudev-dev libxi-dev libxrandr-dev yasm xvfb wget unzip \
-              gcc-multilib g++-multilib
+          sudo apt-get --no-install-recommends install build-essential pkg-config \
+              libx11-dev libxcursor-dev libxinerama-dev libgl1-mesa-dev libglu-dev \
+              libasound2-dev libpulse-dev libdbus-1-dev libudev-dev libxi-dev \
+              libxrandr-dev yasm xvfb wget unzip gcc-multilib g++-multilib
 
       # Install Bluetooth module dependencies
       - name: Bluetooth module dependencies
         run: |
-          sudo apt-get install libsdbus-c++-dev
+          sudo apt-get --no-install-recommends install qt6-connectivity-dev
 
       # Use Godot repository action
       - name: Setup Godot build cache
