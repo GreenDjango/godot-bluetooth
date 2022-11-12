@@ -11,9 +11,8 @@
 
 ### 💾 Setup:
 #### via submodule
-1. `git clone --recursive --single-branch --branch 3.4-stable https://github.com/godotengine/godot.git`
-2. open a terminal, `cd godot`, and run the following commands:  
-`cd modules`  
+1. `git clone --depth 1 --recursive --single-branch --branch 3.4-stable https://github.com/godotengine/godot.git`
+2. open a terminal, `cd godot/modules/`, and run the following commands:  
 `git submodule add https://github.com/GreenDjango/godot-bluetooth.git bluetooth`  
 `cd ../`  
 `git submodule update --init --recursive`
@@ -31,7 +30,7 @@
 <details>
       <summary>🐧<b>Ubuntu</b> dependencies</summary>
 
-      sudo apt install qt6-connectivity-dev
+      sudo apt-get install qt6-connectivity-dev
 </details>
 <details>
       <summary>🐧<b>Fedora</b> dependencies</summary>

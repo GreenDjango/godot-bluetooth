@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+import os
+
 Import("env")
 Import("env_modules")
 
@@ -13,25 +15,25 @@ thirdparty_sources = ["bluetooth_dummy.cpp"]
 thirdparty_platform = "DUMMY"
 
 if env["platform"] == "x11":
-    thirdparty_platform = "X11"
-    thirdparty_sources += ["bluetooth_bluez.cpp"]
+    if os.system("pkg-config --with-path=thirdparty/qt6/lib/pkgconfig --exists Qt6Bluetooth") == 0:
+        thirdparty_platform = "X11"
+    else:
+        print("Error: Bluetooth Module: Qt6Bluetooth library not found. Dummy using.")
+else:
+    print("Warning: Bluetooth Module: Platform not supported. Dummy using.")
 
-thirdparty_sources = [thirdparty_dir + file for file in thirdparty_sources]
+if thirdparty_platform == "X11":
+    env_bluetooth.ParseConfig("pkg-config Qt6Bluetooth --cflags")
+    env.ParseConfig("pkg-config Qt6Bluetooth --libs")
+    thirdparty_sources += ["bluetooth_bluez.cpp"]
 
 env_bluetooth.Prepend(CPPPATH=[thirdparty_dir])
 env_bluetooth.Append(
-    CPPDEFINES=[
-        "GODOT_BLUETOOTH",
-        "QT_BLUETOOTH_LIB", "QT_CORE_LIB", "QT_DBUS_LIB", "QT_NETWORK_LIB", "QT_NO_DEBUG",
-        f"GODOT_BLUETOOTH_P_{thirdparty_platform}"
-    ],
+    CPPDEFINES=["GODOT_BLUETOOTH", f"GODOT_BLUETOOTH_P_{thirdparty_platform}", "QT_NO_DEBUG"],
     CXXFLAGS=["-std=c++17", "-std=gnu++17"]
 )
-env_bluetooth.AppendUnique(CXXFLAGS=('-isystem', '/usr/include/qt6'))
-env_bluetooth.AppendUnique(CXXFLAGS=('-isystem', '/usr/include/qt6/QtBluetooth'))
-env_bluetooth.AppendUnique(CXXFLAGS=('-isystem', '/usr/include/qt6/QtCore'))
-env_bluetooth.AppendUnique(CXXFLAGS=('-isystem', '/usr/include/qt6/QtNetwork'))
-env_bluetooth.AppendUnique(CXXFLAGS=('-isystem', '/usr/include/qt6/QtDBus'))
+
+thirdparty_sources = [thirdparty_dir + file for file in thirdparty_sources]
 
 env_thirdparty = env_bluetooth.Clone()
 # env_thirdparty.disable_warnings()
@@ -47,7 +49,5 @@ env.modules_sources += module_obj
 
 # Needed to force rebuilding the module files when the thirdparty library is updated.
 env.Depends(module_obj, thirdparty_obj)
-
-env.Append(LIBS=["Qt6Bluetooth", "Qt6Core", "libQt6Network", "Qt6DBus"])
 
 # from pprint import pprint; pprint(vars(env))
