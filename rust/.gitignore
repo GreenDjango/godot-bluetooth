@@ -1,0 +1,14 @@
+target/
+.cargo-ok
+
+blueplug/lib/*~
+
+project/*.translation
+project/.import/
+project/.mono/
+project/data_*/
+project/export.cfg
+
+rust/**/*.rs.bk
+rust/Cargo.lock
+rust/debug/

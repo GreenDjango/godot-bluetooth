@@ -1,0 +1,40 @@
+[general]
+
+singleton=false
+load_once=true
+symbol_prefix="godot_"
+reloadable=true
+
+[entry]
+
+; Android.arm64-v8a="res://../lib/aarch64-linux-android/libmy_awesome_game.so"
+; Android.armeabi-v7a="res://../lib/armv7-linux-androideabi/libmy_awesome_game.so"
+; Android.x86="res://../lib/i686-linux-android/libmy_awesome_game.so"
+; Android.x86_64="res://../lib/x86_64-linux-android/libmy_awesome_game.so"
+; HTML5.wasm32 = "res://../lib/wasm32-unknown-emscripten/my_awesome_game.wasm"
+; iOS.arm64="res://../lib/aarch64-apple-ios/libmy_awesome_game.a"
+; OSX.64="res://../lib/x86_64-apple-darwin/libmy_awesome_game.dylib"
+; Server.32="res://../lib/i686-unknown-linux-gnu/libmy_awesome_game.so"
+; Server.64="res://../lib/x86_64-unknown-linux-gnu/libmy_awesome_game.so"
+; Windows.32="res://../lib/i686-pc-windows-gnu/my_awesome_game.dll"
+; Windows.32="res://../lib/i686-pc-windows-msvc/my_awesome_game.dll"
+; Windows.64="res://../lib/x86_64-pc-windows-gnu/my_awesome_game.dll"
+; Windows.64="res://../lib/x86_64-pc-windows-msvc/my_awesome_game.dll"
+; X11.32="res://../lib/i686-unknown-linux-gnu/libmy_awesome_game.so"
+X11.64="res://addons/blueplug/lib/x86_64-unknown-linux-gnu/blueplug.so"
+
+[dependencies]
+
+; Android.arm64-v8a=[  ]
+; Android.armeabi-v7a=[  ]
+; Android.x86=[  ]
+; Android.x86_64=[  ]
+; HTML5.wasm32=[  ]
+; iOS.arm64=[  ]
+; OSX.64=[  ]
+; Server.32=[  ]
+; Server.64=[  ]
+; Windows.32=[  ]
+; Windows.64=[  ]
+; X11.32=[  ]
+X11.64=[  ]
