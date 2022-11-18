@@ -21,7 +21,7 @@ reloadable=true
 ; Windows.64="res://../lib/x86_64-pc-windows-gnu/my_awesome_game.dll"
 ; Windows.64="res://../lib/x86_64-pc-windows-msvc/my_awesome_game.dll"
 ; X11.32="res://../lib/i686-unknown-linux-gnu/libmy_awesome_game.so"
-X11.64="res://addons/blueplug/lib/x86_64-unknown-linux-gnu/blueplug.so"
+X11.64="res://addons/blueplug/lib/x86_64-unknown-linux-gnu/libblueplug.so"
 
 [dependencies]
 
