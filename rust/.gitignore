@@ -1,8 +1,7 @@
 blueplug/lib
+blueplug/lib/*~
 target/
 .cargo-ok
-
-blueplug/lib/*~
 
 project/*.translation
 project/.import/
@@ -13,3 +12,5 @@ project/export.cfg
 rust/**/*.rs.bk
 rust/Cargo.lock
 rust/debug/
+
+.vscode/
