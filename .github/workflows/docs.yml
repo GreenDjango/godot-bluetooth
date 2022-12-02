@@ -1,0 +1,52 @@
+name: Deploy to Github Pages
+
+on:
+  push:
+    branches: ["main"]
+  # release:
+  #   types: [created]
+
+  workflow_dispatch:
+
+concurrency:
+  group: "gh-pages"
+  cancel-in-progress: true
+
+env:
+  NODE_VERSION: 16
+
+jobs:
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup Node.js version ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'yarn'
+
+      - run: yarn install --frozen-lockfile --non-interactive
+      - run: yarn run build
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v1
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v1
+        with:
+          path: './build'
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v1
