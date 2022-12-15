@@ -12,26 +12,48 @@ use std::time::Duration;
 use tokio::time;
 use uuid::Uuid;
 
-use crate::bluetooth_trait;
+use crate::bluetooth::{self, DeviceInfo};
 
-struct BluetoothModule {
+pub struct BluetoothModule {
     manager: Manager,
-    adapters: Adapter,
+    central: Adapter,
 }
+
+impl BluetoothModule {
+    pub async fn new() -> Result<Self, Box<dyn Error>> {
+        let manager = Manager::new().await.unwrap();
+        let adapters = manager.adapters().await?;
+        let central = adapters.into_iter().nth(0).unwrap();       
+        Ok(Self {
+            manager: manager,
+            central: central,
+        })
+    }
+
+    async fn devices_to_vec(&self) -> Result<Vec<bluetooth::DeviceInfo>, ()> {
+        let mut devs: Vec<DeviceInfo> = Vec::new();
+        let peripherals = self.central.peripherals().await.unwrap();
+        for peripheral in peripherals {
+            let properties = peripheral.properties().await.unwrap().unwrap();
+            devs.push(DeviceInfo::new(
+                properties.address.to_string(),
+                properties.address_type.unwrap_or(btleplug::api::AddressType::default()),
+                properties.local_name.unwrap_or(String::from("")),
+            ));
+        }
+        Ok(devs)
+    }
+}
+
 
 // #[tokio::main]
 #[async_trait]
-impl bluetooth_trait::Bluetooth for BluetoothModule {
-    async fn init(&self) -> Result<(), Box<dyn Error>> {
-        let manager = Manager::new().await.unwrap();
-
-        // get the first bluetooth adapter
-        let adapters = manager.adapters().await?;
-        let central = adapters.into_iter().nth(0).unwrap();
-        Ok(())
-    }
-
-    async fn scan_devices(&self) -> Result<Vec<bluetooth_trait::DeviceInfo>, Box<dyn Error>> {
-        Ok(Vec::new())
+impl bluetooth::Bluetooth for BluetoothModule {
+    async fn scan_devices(&self, scan_duration: u8) -> Result<Vec<DeviceInfo>, Box<dyn Error>> {
+        self.central.start_scan(ScanFilter::default()).await?;
+        time::sleep(Duration::from_secs(scan_duration as u64)).await;
+        let devs = self.devices_to_vec().await.unwrap();
+        self.central.stop_scan().await?;
+        Ok(devs)
     }
 }

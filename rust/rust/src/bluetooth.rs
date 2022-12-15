@@ -1,10 +1,13 @@
 #![allow(dead_code)]
 
 use std::error::Error;
+use async_trait::async_trait;
+use btleplug::api::AddressType;
 
+#[derive(Debug)]
 pub struct DeviceInfo {
 	pub address: String,
-	pub address_type: String,
+	pub address_type: AddressType,
 	pub name: String,
 	pub alias: String,
 	pub icon: String,
@@ -16,7 +19,7 @@ pub struct DeviceInfo {
 }
 
 impl DeviceInfo {
-    pub fn new(address: String, address_type: String, name: String) -> Self {
+    pub fn new(address: String, address_type: AddressType, name: String) -> Self {
         Self {
             address: address,
             address_type: address_type,
@@ -32,12 +35,9 @@ impl DeviceInfo {
     }
 }
 
-use async_trait::async_trait;
-
 #[async_trait]
 pub trait Bluetooth {
-	async fn init(&self) -> Result<(), Box<dyn Error>>;
-    async fn scan_devices(&self) -> Result<Vec<DeviceInfo>, Box<dyn Error>>;
+    async fn scan_devices(&self, scan_duration: u8) -> Result<Vec<DeviceInfo>, Box<dyn Error>>;
 
 	// fn remove_device(&self, device_address: String) ;
 	// fn start_discovery(&self) ;
