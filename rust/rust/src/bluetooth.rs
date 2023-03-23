@@ -1,6 +1,6 @@
 #![allow(dead_code)]
 
-use std::error::Error;
+use std::{error::Error};
 use async_trait::async_trait;
 use btleplug::api::AddressType;
 
@@ -15,11 +15,13 @@ pub struct DeviceInfo {
 	pub trusted: bool,
 	pub blocked: bool,
 	pub legacy_pairing: bool,
-	pub connected: bool
+	pub connected: bool,
+	pub rssi: i16,
+	pub services: Vec<String>
 }
 
 impl DeviceInfo {
-    pub fn new(address: String, address_type: AddressType, name: String) -> Self {
+    pub fn new(address: String, address_type: AddressType, name: String, rssi: i16, services: Vec<String>) -> Self {
         Self {
             address: address,
             address_type: address_type,
@@ -30,18 +32,28 @@ impl DeviceInfo {
             trusted: false,
             blocked: false,
             legacy_pairing: false,
-            connected: false
+            connected: false,
+			rssi: rssi,
+			services: services
         }
     }
 }
 
 #[async_trait]
 pub trait Bluetooth {
-    async fn scan_devices(&self, scan_duration: u8) -> Result<Vec<DeviceInfo>, Box<dyn Error>>;
+	async fn start_discovery(&self) -> Result<(), Box<dyn Error>>;
+	async fn stop_discovery(&self) -> Result<(), Box<dyn Error>>;
+
+    async fn list_devices(&self) -> Result<Vec<DeviceInfo>, Box<dyn Error>>;
+    
+	async fn scan_devices(&self, scan_duration: u8) -> Result<Vec<DeviceInfo>, Box<dyn Error>>;
+
+	fn enable_event(&mut self) -> Result<(), Box<dyn Error>>;
+	fn disable_event(&mut self) -> Result<(), Box<dyn Error>>;
+
+    async fn event_thread(&self) -> Result<(), Box<dyn Error>>;
 
 	// fn remove_device(&self, device_address: String) ;
-	// fn start_discovery(&self) ;
-	// fn stop_discovery(&self) ;
 
 	// fn address(&self) -> String;
 	// fn address_type(&self) -> String;

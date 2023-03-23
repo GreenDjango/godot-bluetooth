@@ -1,6 +1,6 @@
 use gdnative::api::{Reference};
 use gdnative::prelude::*;
-mod bluetooth_trait;
+mod bluetooth;
 mod bluetooth_module;
 
 #[derive(NativeClass)]
