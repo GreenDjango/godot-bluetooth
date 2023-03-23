@@ -4,24 +4,28 @@
 const lightCodeTheme = require('prism-react-renderer/themes/github');
 const darkCodeTheme = require('prism-react-renderer/themes/dracula');
 
-const REPO_URL = 'https://github.com/GreenDjango/godot-bluetooth'
+const isProd = process.env.NODE_ENV === 'production';
+const repositoryUrl = 'https://github.com/GreenDjango/godot-bluetooth'
+const projectName = 'Godot Bluetooth Module'
+const projectShortName = 'GBM'
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
-  title: 'Bluetooth Godot plugin',
+  title: projectName,
   tagline: 'Dinosaurs are cool',
   url: 'https://greendjango.github.io/',
   baseUrl: '/godot-bluetooth/',
-  onBrokenLinks: 'throw',
-  onBrokenMarkdownLinks: 'warn',
   favicon: 'img/favicon.ico',
   trailingSlash: true,
+
+  onBrokenLinks: 'throw',
+  onBrokenMarkdownLinks: 'throw',
 
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
   organizationName: 'GreenDjango', // Usually your GitHub org/user name.
   projectName: 'godot-bluetooth', // Usually your repo name.
-  // deploymentBranch: 'gh-pages',
+  // deploymentBranch: 'gh-pages', // Commented for use CI instead
 
   // Even if you don't use internalization, you can use this field to set useful
   // metadata like html lang. For example, if your site is Chinese, you may want
@@ -31,32 +35,72 @@ const config = {
     locales: ['en'],
   },
 
-  presets: [
+  plugins: [
+    '@docusaurus/plugin-content-pages',
     [
-      'classic',
-      /** @type {import('@docusaurus/preset-classic').Options} */
+      '@docusaurus/plugin-content-docs',
+      /** @type {import('@docusaurus/plugin-content-docs').Options} */
       ({
-        docs: {
-          sidebarPath: require.resolve('./sidebars.js'),
-          editUrl: `${REPO_URL}/tree/main/docs/docs/`,
-        },
-        theme: {
-          customCss: require.resolve('./src/css/custom.css'),
-        },
-      }),
+        sidebarPath: require.resolve('./sidebars.js'),
+        editUrl: `${repositoryUrl}/tree/main/docs/docs/`,
+        showLastUpdateAuthor: false,
+        showLastUpdateTime: true,
+      })
+    ],
+    [
+      '@docusaurus/plugin-client-redirects',
+      /** @type {import('@docusaurus/plugin-client-redirects').Options} */
+      {
+        redirects: [
+          {
+            from: '/docs',
+            to: '/docs/intro',
+          },
+        ],
+      },
+    ],
+    !isProd ? '@docusaurus/plugin-debug' : undefined,
+  ],
+
+  themes: [
+    [
+      '@docusaurus/theme-classic',
+      /** @type {import('@docusaurus/theme-classic').Options} */
+      ({
+        customCss: require.resolve('./src/global.css'),
+      })
     ],
   ],
 
   themeConfig:
-    /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
+    /** @type {import('@docusaurus/types').ThemeConfig & import('@docusaurus/theme-common').UserThemeConfig} */
     ({
+      image: 'img/card-og.png',
+      colorMode: {
+        defaultMode: 'dark',
+        disableSwitch: false,
+        respectPrefersColorScheme: true,
+      },
+      prism: {
+        theme: lightCodeTheme,
+        darkTheme: darkCodeTheme,
+      },
+      docs: {
+        versionPersistence: 'localStorage',
+        sidebar: {
+          hideable: true,
+        },
+      },
+      // announcementBar: {},
       navbar: {
-        title: 'Bluetooth Godot plugin',
+        title: projectName,
         logo: {
-          alt: 'My Site Logo',
+          alt: `${projectShortName} Logo`,
           src: 'img/logo.svg',
+          srcDark: 'img/logo-dark.svg',
         },
         items: [
+          // Left
           {
             type: 'doc',
             docId: 'intro',
@@ -64,6 +108,7 @@ const config = {
             label: 'Docs',
           },
           // {to: '/blog', label: 'Blog', position: 'left'},
+
           // Right
           {
             type: 'docsVersionDropdown',
@@ -89,13 +134,13 @@ const config = {
                 value: '<hr style="margin: 0.3rem 0;">',
               },
               {
-                href: `${REPO_URL}/`,
+                href: `${repositoryUrl}/`,
                 label: 'Help Us Translate',
               },
             ],
           },
           {
-            href: REPO_URL,
+            href: repositoryUrl,
             position: 'right',
             className: 'header-github-link',
             'aria-label': 'GitHub repository',
@@ -140,16 +185,21 @@ const config = {
               // },
               {
                 label: 'GitHub',
-                href: REPO_URL,
+                href: repositoryUrl,
+              },
+            ],
+          },
+          {
+            title: 'Legal',
+            items: [
+              {
+                label: 'Illustrations by Storyset',
+                href: 'https://storyset.com/online',
               },
             ],
           },
         ],
-        copyright: `Copyright © ${new Date().getFullYear()} My Project, Inc. Built with Docusaurus.`,
-      },
-      prism: {
-        theme: lightCodeTheme,
-        darkTheme: darkCodeTheme,
+        copyright: `Copyright © ${new Date().getFullYear()} ${projectName}. Built with Docusaurus.`,
       },
     }),
 };
