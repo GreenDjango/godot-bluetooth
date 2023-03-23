@@ -4,65 +4,89 @@
 use async_trait::async_trait;
 
 // use btleplug::Result;
-use btleplug::api::{bleuuid::uuid_from_u16, Central, CentralEvent, Manager as _, Peripheral as _, ScanFilter, WriteType};
+use btleplug::api::{
+    bleuuid::uuid_from_u16, Central, CentralEvent, Manager as _, Peripheral as _, ScanFilter,
+    WriteType,
+};
 use btleplug::platform::{Adapter, Manager, Peripheral};
-use rand::{Rng, thread_rng};
+use futures::stream::StreamExt;
+use rand::{thread_rng, Rng};
 use std::error::Error;
+use std::future::{ready, IntoFuture, Ready};
 use std::thread;
 use std::time::Duration;
 use tokio::time;
 use uuid::Uuid;
-use futures::stream::StreamExt;
 
 use crate::bluetooth::{self, DeviceInfo};
 
 pub struct BluetoothModule {
     discovering_enable: bool,
     event_enable: bool,
-    manager: Manager,
-    central: Adapter,
+    manager: Option<Manager>,
+    central: Option<Adapter>,
+}
+
+impl IntoFuture for BluetoothModule {
+    type Output = BluetoothModule;
+    type IntoFuture = Ready<Self::Output>;
+
+    fn into_future(self) -> Self::IntoFuture {
+        ready(self)
+    }
 }
 
 impl BluetoothModule {
-    pub async fn new() -> Result<Self, Box<dyn Error>> {
-        let manager = Manager::new().await.unwrap();
-        let adapters = manager.adapters().await?;
-        let central = adapters.into_iter().nth(0).unwrap();       
+    pub fn new() -> Result<Self, Box<dyn Error>> {
         Ok(Self {
             discovering_enable: false,
             event_enable: false,
-            manager: manager,
-            central: central,
+            manager: None,
+            central: None,
         })
+    }
+
+    pub async fn init(& mut self) -> Result<(), Box<dyn Error>> {
+        let manager = Manager::new().await.unwrap();
+        let adapters = manager.adapters().await?;
+        let central = adapters.into_iter().nth(0).unwrap();
+        self.manager = Some(manager);
+        self.central = Some(central);
+        Ok(())
     }
 
     async fn devices_to_vec(&self) -> Result<Vec<bluetooth::DeviceInfo>, ()> {
         let mut devs: Vec<DeviceInfo> = Vec::new();
-        let peripherals = self.central.peripherals().await.unwrap();
+        let peripherals = self.central.as_ref().expect("").peripherals().await.unwrap();
         for peripheral in peripherals {
             let properties = peripheral.properties().await.unwrap().unwrap();
             devs.push(DeviceInfo::new(
                 properties.address.to_string(),
-                properties.address_type.unwrap_or(btleplug::api::AddressType::default()),
+                properties
+                    .address_type
+                    .unwrap_or(btleplug::api::AddressType::default()),
                 properties.local_name.unwrap_or(String::from("")),
                 properties.rssi.unwrap_or(0),
-                properties.services.iter().map(|s| Uuid::to_string(s)).collect()
+                properties
+                    .services
+                    .iter()
+                    .map(|s| Uuid::to_string(s))
+                    .collect(),
             ));
         }
         Ok(devs)
     }
 }
 
-
 #[async_trait]
 impl bluetooth::Bluetooth for BluetoothModule {
     async fn start_discovery(&self) -> Result<(), Box<dyn Error>> {
-        self.central.start_scan(ScanFilter::default()).await?;
+        self.central.as_ref().expect("").start_scan(ScanFilter::default()).await?;
         Ok(())
     }
 
-    async fn stop_discovery(&self) -> Result<(), Box<dyn Error>>{
-        self.central.stop_scan().await?;
+    async fn stop_discovery(&self) -> Result<(), Box<dyn Error>> {
+        self.central.as_ref().expect("").stop_scan().await?;
         Ok(())
     }
 
@@ -79,19 +103,18 @@ impl bluetooth::Bluetooth for BluetoothModule {
         Ok(devs)
     }
 
-
-	fn enable_event(&mut self) -> Result<(), Box<dyn Error>> {
+    fn enable_event(&mut self) -> Result<(), Box<dyn Error>> {
         self.event_enable = true;
         Ok(())
     }
 
-	fn disable_event(&mut self) -> Result<(), Box<dyn Error>> {
+    fn disable_event(&mut self) -> Result<(), Box<dyn Error>> {
         self.event_enable = false;
         Ok(())
     }
 
     async fn event_thread(&self) -> Result<(), Box<dyn Error>> {
-        let mut events = self.central.events().await?;
+        let mut events = self.central.as_ref().expect("").events().await?;
         while let Some(event) = events.next().await {
             match event {
                 CentralEvent::DeviceDiscovered(id) => {
