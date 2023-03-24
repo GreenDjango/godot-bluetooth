@@ -41,12 +41,12 @@ impl DeviceInfo {
 
 #[async_trait]
 pub trait Bluetooth {
-	async fn start_discovery(&self) -> Result<(), Box<dyn Error>>;
-	async fn stop_discovery(&self) -> Result<(), Box<dyn Error>>;
+	fn start_discovery(&self) -> Result<(), Box<dyn Error>>;
+	fn stop_discovery(&self) -> Result<(), Box<dyn Error>>;
 
-    async fn list_devices(&self) -> Result<Vec<DeviceInfo>, Box<dyn Error>>;
+    fn list_devices(&self) -> Result<Vec<DeviceInfo>, Box<dyn Error>>;
     
-	async fn scan_devices(&self, scan_duration: u8) -> Result<Vec<DeviceInfo>, Box<dyn Error>>;
+	fn scan_devices(&self, scan_duration: u8) -> Result<Vec<DeviceInfo>, Box<dyn Error>>;
 
 	fn enable_event(&mut self) -> Result<(), Box<dyn Error>>;
 	fn disable_event(&mut self) -> Result<(), Box<dyn Error>>;

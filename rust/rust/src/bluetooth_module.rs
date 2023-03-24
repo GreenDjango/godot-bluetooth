@@ -16,6 +16,7 @@ use std::future::{ready, IntoFuture, Ready};
 use std::thread;
 use std::time::Duration;
 use tokio::time;
+use futures::executor;
 use uuid::Uuid;
 
 use crate::bluetooth::{self, DeviceInfo};
@@ -25,15 +26,6 @@ pub struct BluetoothModule {
     event_enable: bool,
     manager: Option<Manager>,
     central: Option<Adapter>,
-}
-
-impl IntoFuture for BluetoothModule {
-    type Output = BluetoothModule;
-    type IntoFuture = Ready<Self::Output>;
-
-    fn into_future(self) -> Self::IntoFuture {
-        ready(self)
-    }
 }
 
 impl BluetoothModule {
@@ -46,20 +38,20 @@ impl BluetoothModule {
         })
     }
 
-    pub async fn init(& mut self) -> Result<(), Box<dyn Error>> {
-        let manager = Manager::new().await.unwrap();
-        let adapters = manager.adapters().await?;
+    pub fn init(& mut self) -> Result<(), Box<dyn Error>> {
+        let manager = executor::block_on(Manager::new()).unwrap();
+        let adapters = executor::block_on(manager.adapters())?;
         let central = adapters.into_iter().nth(0).unwrap();
         self.manager = Some(manager);
         self.central = Some(central);
         Ok(())
     }
 
-    async fn devices_to_vec(&self) -> Result<Vec<bluetooth::DeviceInfo>, ()> {
+    fn devices_to_vec(&self) -> Result<Vec<bluetooth::DeviceInfo>, ()> {
         let mut devs: Vec<DeviceInfo> = Vec::new();
-        let peripherals = self.central.as_ref().expect("").peripherals().await.unwrap();
+        let peripherals = executor::block_on(self.central.as_ref().expect("Must call the init method").peripherals()).unwrap();
         for peripheral in peripherals {
-            let properties = peripheral.properties().await.unwrap().unwrap();
+            let properties = executor::block_on(peripheral.properties()).unwrap().unwrap();
             devs.push(DeviceInfo::new(
                 properties.address.to_string(),
                 properties
@@ -80,26 +72,26 @@ impl BluetoothModule {
 
 #[async_trait]
 impl bluetooth::Bluetooth for BluetoothModule {
-    async fn start_discovery(&self) -> Result<(), Box<dyn Error>> {
-        self.central.as_ref().expect("").start_scan(ScanFilter::default()).await?;
+    fn start_discovery(&self) -> Result<(), Box<dyn Error>> {
+        executor::block_on(self.central.as_ref().expect("Must call the init method").start_scan(ScanFilter::default()))?;
         Ok(())
     }
 
-    async fn stop_discovery(&self) -> Result<(), Box<dyn Error>> {
-        self.central.as_ref().expect("").stop_scan().await?;
+    fn stop_discovery(&self) -> Result<(), Box<dyn Error>> {
+        executor::block_on(self.central.as_ref().expect("Must call the init method").stop_scan())?;
         Ok(())
     }
 
-    async fn list_devices(&self) -> Result<Vec<DeviceInfo>, Box<dyn Error>> {
-        let devs = self.devices_to_vec().await.unwrap();
+    fn list_devices(&self) -> Result<Vec<DeviceInfo>, Box<dyn Error>> {
+        let devs = self.devices_to_vec().unwrap();
         Ok(devs)
     }
 
-    async fn scan_devices(&self, scan_duration: u8) -> Result<Vec<DeviceInfo>, Box<dyn Error>> {
-        self.start_discovery().await?;
-        time::sleep(Duration::from_secs(scan_duration as u64)).await;
-        let devs = self.list_devices().await?;
-        self.stop_discovery().await?;
+    fn scan_devices(&self, scan_duration: u8) -> Result<Vec<DeviceInfo>, Box<dyn Error>> {
+        self.start_discovery()?;
+        executor::block_on(time::sleep(Duration::from_secs(scan_duration as u64)));
+        let devs = self.list_devices()?;
+        self.stop_discovery()?;
         Ok(devs)
     }
 
@@ -114,7 +106,7 @@ impl bluetooth::Bluetooth for BluetoothModule {
     }
 
     async fn event_thread(&self) -> Result<(), Box<dyn Error>> {
-        let mut events = self.central.as_ref().expect("").events().await?;
+        let mut events = self.central.as_ref().expect("Must call the init method").events().await?;
         while let Some(event) = events.next().await {
             match event {
                 CentralEvent::DeviceDiscovered(id) => {
