@@ -131,7 +131,7 @@ build-%-release:
 
 
 PROJECT_NAME		:= blueplug
-GODOT_BINARY_PATH	:= ~/Godot/Godot_v3.5.1-stable_x11.64
+GODOT_BINARY_PATH	:= godot3
 GODOT_PROJECT_PATH	:= project
 
 all: run

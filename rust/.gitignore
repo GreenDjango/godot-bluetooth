@@ -1,16 +1,7 @@
-blueplug/lib
-blueplug/lib/*~
+/addons/blueplug/lib
+/addons/blueplug/logos/*.import
+
 target/
 .cargo-ok
-
-project/*.translation
-project/.import/
-project/.mono/
-project/data_*/
-project/export.cfg
-
-rust/**/*.rs.bk
-rust/Cargo.lock
-rust/debug/
 
 .vscode/
