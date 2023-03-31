@@ -1,8 +1,9 @@
 #![allow(dead_code)]
 
 use std::{error::Error};
-use async_trait::async_trait;
+// use async_trait::async_trait;
 use btleplug::api::AddressType;
+use gdnative::prelude::Dictionary;
 
 #[derive(Debug)]
 pub struct DeviceInfo {
@@ -18,6 +19,15 @@ pub struct DeviceInfo {
 	pub connected: bool,
 	pub rssi: i16,
 	pub services: Vec<String>
+}
+
+impl From<&DeviceInfo> for Dictionary {
+	fn from(dev: &DeviceInfo) -> Dictionary {
+        let dict = Dictionary::new_thread_local();
+		dict.insert("addres", "myaddress");
+		// dict.into
+		Dictionary::from(dict.duplicate())
+    }
 }
 
 impl DeviceInfo {
@@ -39,38 +49,12 @@ impl DeviceInfo {
     }
 }
 
-#[async_trait]
+// #[async_trait]
 pub trait Bluetooth {
-	fn start_discovery(&self) -> Result<(), Box<dyn Error>>;
-	fn stop_discovery(&self) -> Result<(), Box<dyn Error>>;
+	// fn start_discovery(&self) -> Result<(), Box<dyn Error>>;
+	// fn stop_discovery(&self) -> Result<(), Box<dyn Error>>;
 
-    fn list_devices(&self) -> Result<Vec<DeviceInfo>, Box<dyn Error>>;
+    // fn list_devices(&self) -> Result<Vec<DeviceInfo>, Box<dyn Error>>;
     
-	fn scan_devices(&self, scan_duration: u8) -> Result<Vec<DeviceInfo>, Box<dyn Error>>;
-
-	fn enable_event(&mut self) -> Result<(), Box<dyn Error>>;
-	fn disable_event(&mut self) -> Result<(), Box<dyn Error>>;
-
-    async fn event_thread(&self) -> Result<(), Box<dyn Error>>;
-
-	// fn remove_device(&self, device_address: String) ;
-
-	// fn address(&self) -> String;
-	// fn address_type(&self) -> String;
-	// fn set_alias(&self, alias: String) -> String;
-	// fn get_alias(&self) -> String;
-
-    // fn set_discoverable(enable: bool);
-	// fn is_discoverable(&self) -> bool;
-
-    // fn discovering(&self) ;
-	// fn modalias(&self) -> String;
-	// fn name(&self) -> String;
-	// fn set_pairable(&self, enable: bool) ;
-	// fn is_pairable(&self) ;
-
-    // fn set_powered(&self, enable: bool) ;
-	// fn is_powered(&self) -> bool;
-
-	// fn is_dummy(&self);
+	fn scan_devices(scan_duration: u8) -> Result<Vec<DeviceInfo>, Box<dyn Error>>;
 }

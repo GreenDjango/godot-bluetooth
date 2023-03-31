@@ -10,11 +10,17 @@ config_version=4
 
 _global_script_classes=[ {
 "base": "",
+"class": "AsyncExecutorDriver",
+"language": "NativeScript",
+"path": "res://addons/blueplug/native/AsyncExecutorDriver.gdns"
+}, {
+"base": "",
 "class": "BluePlugUtils",
 "language": "NativeScript",
 "path": "res://addons/blueplug/native/BluePlugUtils.gdns"
 } ]
 _global_script_class_icons={
+"AsyncExecutorDriver": "",
 "BluePlugUtils": ""
 }
 

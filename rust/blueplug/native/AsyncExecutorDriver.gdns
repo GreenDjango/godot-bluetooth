@@ -3,7 +3,7 @@
 [ext_resource path="res://addons/blueplug/native/BluePlug.gdnlib" type="GDNativeLibrary" id=1]
 
 [resource]
-resource_name = "BluePlugUtils"
-class_name = "BluePlugUtils"
-script_class_name = "BluePlugUtils"
+resource_name = "AsyncExecutorDriver"
+class_name = "AsyncExecutorDriver"
+script_class_name = "AsyncExecutorDriver"
 library = ExtResource( 1 )
