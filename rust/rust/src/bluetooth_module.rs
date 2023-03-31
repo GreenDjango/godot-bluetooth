@@ -1,7 +1,6 @@
 #![allow(dead_code)]
 #![allow(unused_imports)]
 
-// use btleplug::Result;
 use btleplug::api::{
     bleuuid::uuid_from_u16, Central, CentralEvent, Manager as _, Peripheral as _, ScanFilter,
     WriteType,
@@ -21,32 +20,15 @@ use crate::bluetooth::{self, DeviceInfo};
 
 #[derive(Clone)]
 pub struct BluetoothModule {
-    // discovering_enable: bool,
-    // manager: Option<Manager>,
-    // central: Option<Adapter>,
 }
 
 impl BluetoothModule {
     pub fn new() -> Result<Self, Box<dyn Error>> {
-        Ok(Self {
-            // discovering_enable: false,
-            // manager: None,
-            // central: None,
-        })
+        Ok(Self {})
     }
 
-    // pub fn init(& mut self) -> Result<(), Box<dyn Error>> {
-    //     let manager = executor::block_on(Manager::new()).unwrap();
-    //     let adapters = executor::block_on(manager.adapters())?;
-    //     let central = adapters.into_iter().nth(0).unwrap();
-    //     self.manager = Some(manager);
-    //     self.central = Some(central);
-    //     Ok(())
-    // }
-
-    pub async fn get_manager() -> Result<Manager, Box<dyn Error>> {
-        // let manager = executor::block_on(Manager::new()).unwrap();
-        let manager = Manager::new().await.unwrap();
+    pub fn get_manager() -> Result<Manager, Box<dyn Error>> {
+        let manager = executor::block_on(Manager::new()).unwrap();
         Ok(manager)
     }
 
@@ -90,9 +72,9 @@ impl BluetoothModule {
     }
 }
 
-#[async_trait::async_trait]
+// #[async_trait::async_trait]
 impl bluetooth::Bluetooth for BluetoothModule {
-    async fn scan_devices(scan_duration: u8) -> Result<Vec<DeviceInfo>, Box<dyn Error>> {
+    fn scan_devices(scan_duration: u8) -> Result<Vec<DeviceInfo>, Box<dyn Error>> {
         println!("get central");
         let central = BluetoothModule::get_adapter()?;
         println!("start disco");

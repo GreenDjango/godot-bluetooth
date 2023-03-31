@@ -3,7 +3,7 @@
 use std::{error::Error};
 use btleplug::api::AddressType;
 use gdnative::prelude::Dictionary;
-use async_trait;
+// use async_trait;
 
 #[derive(Debug)]
 pub struct DeviceInfo {
@@ -49,7 +49,7 @@ impl DeviceInfo {
     }
 }
 
-#[async_trait::async_trait]
+// #[async_trait::async_trait]
 pub trait Bluetooth {
-	async fn scan_devices(scan_duration: u8) -> Result<Vec<DeviceInfo>, Box<dyn Error>>;
+	fn scan_devices(scan_duration: u8) -> Result<Vec<DeviceInfo>, Box<dyn Error>>;
 }

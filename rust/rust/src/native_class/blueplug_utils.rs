@@ -85,15 +85,9 @@ impl AsyncMethod<BluePlugUtils> for GetAccounts {
         spawner.spawn(|_ctx, this, _args| {
             godot_print!("GetAccounts spawn");
 
-            // let provider = this.map(|provider, _owner| {
-            //     match provider.active_provider.as_ref().unwrap() {
-            //         ActiveProvider::JsonRpc(ref json_rpc) => json_rpc.clone(),
-            //         ActiveProvider::LocalWallet(ref local) => local.provider().clone(),
-            //     }
-            // }).unwrap();
             async move {
                 godot_print!("GetAccounts async");
-                let res = BluetoothModule::scan_devices(3).await.unwrap();
+                let res = BluetoothModule::scan_devices(3).unwrap();
                 println!("{:#?}", res);
                 
                 // let accounts = provider.get_accounts().await.unwrap();
