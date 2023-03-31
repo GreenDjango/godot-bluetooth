@@ -1,20 +1,16 @@
 
-use blueplug_utils::BluePlugUtils;
 use gdnative::prelude::*;
-mod blueplug_utils;
-mod bluetooth;
-mod bluetooth_module;
 use tokio::runtime::{Builder, Runtime};
 use tokio::task::LocalSet;
 
 thread_local! {
-    static EXECUTOR: &'static SharedLocalPool = {
+    pub static EXECUTOR: &'static SharedLocalPool = {
         Box::leak(Box::new(SharedLocalPool::default()))
     };
 }
 
 #[derive(Default)]
-struct SharedLocalPool {
+pub struct SharedLocalPool {
     local_set: LocalSet,
 }
 
@@ -31,7 +27,7 @@ impl futures::task::LocalSpawn for SharedLocalPool {
 
 #[derive(NativeClass)]
 #[inherit(Node)]
-struct AsyncExecutorDriver {
+pub struct AsyncExecutorDriver {
     runtime: Runtime,
 }
 

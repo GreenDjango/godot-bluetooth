@@ -103,7 +103,7 @@
 # {% endfor -%}
 
 RUST_BUILD_DIR	:= ./target
-LIB_DIR			:= ./blueplug/lib
+LIB_DIR			:= ./addons/blueplug/lib
 
 LIB_EXT_aarch64-linux-android := so
 LIB_EXT_armv7-linux-androideabi := so
@@ -131,7 +131,7 @@ build-%-release:
 
 
 PROJECT_NAME		:= blueplug
-GODOT_BINARY_PATH	:= godot3
+GODOT_BINARY_PATH	:= /home/leo/Epitech/esp/Godot_v3.5.1-stable_x11.64
 GODOT_PROJECT_PATH	:= project
 
 all: run

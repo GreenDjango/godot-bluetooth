@@ -1,6 +1,6 @@
 /addons/blueplug/lib
 /addons/blueplug/logos/*.import
-
+blueplug
 target/
 .cargo-ok
 

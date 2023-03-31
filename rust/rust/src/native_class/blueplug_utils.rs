@@ -3,22 +3,19 @@ use gdnative::prelude::*;
 use gdnative::tasks::Async;
 use gdnative::tasks::AsyncMethod;
 
+use crate::bluetooth::Bluetooth;
 use crate::bluetooth_module::BluetoothModule;
 
 #[derive(NativeClass)]
 #[inherit(Reference)]
 #[register_with(Self::_register)]
 pub struct BluePlugUtils {
-    bluetooth_mod: Option<BluetoothModule>,
 }
 
 #[methods]
 impl BluePlugUtils {
     fn new(_owner: &Reference) -> Self {
-        Self {
-            // bluetooth_mod: bluetooth_module::BluetoothModule::new().unwrap()
-            bluetooth_mod: None,
-        }
+        Self {}
     }
 
     #[method]
@@ -96,9 +93,11 @@ impl AsyncMethod<BluePlugUtils> for GetAccounts {
             // }).unwrap();
             async move {
                 godot_print!("GetAccounts async");
-
+                let res = BluetoothModule::scan_devices(3).await.unwrap();
+                println!("{:#?}", res);
+                
                 // let accounts = provider.get_accounts().await.unwrap();
-
+                
                 // accounts
                 //     .iter()
                 //     .map(|address| {
@@ -106,7 +105,8 @@ impl AsyncMethod<BluePlugUtils> for GetAccounts {
                 //     })
                 //     .collect::<Vec<Variant>>()
                 //     .to_variant()
-
+                    
+                godot_print!("End async");
                 42.to_variant()
             }
         })
