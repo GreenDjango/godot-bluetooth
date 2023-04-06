@@ -123,15 +123,17 @@ LIB_EXT_x86_64-pc-windows-msvc := dll
 
 build-%-debug:
 	cargo build --target $*
-	mv -b $(RUST_BUILD_DIR)/$*/debug/*.$(LIB_EXT_$*) $(LIB_DIR)/$*
+	mkdir -p $(LIB_DIR)/$*
+	mv -b $(RUST_BUILD_DIR)/$*/debug/*.$(LIB_EXT_$*) $(LIB_DIR)/$*/
 
 build-%-release:
 	cargo build --target $* --release
-	mv -b $(RUST_BUILD_DIR)/$*/release/*.$(LIB_EXT_$*) $(LIB_DIR)/$*
+	mkdir -p $(LIB_DIR)/$*
+	mv -b $(RUST_BUILD_DIR)/$*/release/*.$(LIB_EXT_$*) $(LIB_DIR)/$*/
 
 
 PROJECT_NAME		:= blueplug
-GODOT_BINARY_PATH	:= /home/leo/Epitech/esp/Godot_v3.5.1-stable_x11.64
+GODOT_BINARY_PATH	?= godot3
 GODOT_PROJECT_PATH	:= project
 
 all: run

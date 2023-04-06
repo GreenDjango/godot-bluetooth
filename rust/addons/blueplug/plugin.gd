@@ -12,7 +12,7 @@ const AUTOLOAD_NAME = "Bluetooth"
 # 	disable_singleton()
 
 func _enter_tree() -> void:
-	# add_custom_type("BluePlugUtils", "Reference", preload("res://addons/blueplug/native/BluePlugUtils.gdns"), preload("res://addons/blueplug/logos/logo.png"));
+	# add_custom_type("BluePlugUtils", "Reference", preload("res://addons/blueplug/native/BluePlugUtils.gdns"), preload("res://addons/blueplug/logos/logo.svg"));
 	enable_singleton()
 
 func _exit_tree() -> void:
