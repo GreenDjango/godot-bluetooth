@@ -4,14 +4,21 @@
 
 # Scons cache
 __pycache__/
+.sconsign.dblite
 
 # Compiled Object files
 *.slo
 *.lo
 *.o
 *.obj
+*.os
 
 # Executables
 *.exe
 *.out
 *.app
+
+# Addons
+/addons/*/lib/*
+!/addons/*/lib/.gitkeep
+/addons/**/*.import
