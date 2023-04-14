@@ -2,7 +2,7 @@
 import os
 import sys
 
-env = SConscript("godot-cpp/SConstruct")
+env = SConscript("thirdparty/godot-cpp/SConstruct")
 
 # For reference:
 # - CCFLAGS are compilation flags shared between C and C++
