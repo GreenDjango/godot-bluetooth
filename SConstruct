@@ -17,14 +17,14 @@ sources = Glob("src/*.cpp")
 
 if env["platform"] == "macos":
     library = env.SharedLibrary(
-        "demo/bin/libgdexample.{}.{}.framework/libgdexample.{}.{}".format(
+        "addons/blueplug/lib/libblueplug.{}.{}.framework/libblueplug.{}.{}".format(
             env["platform"], env["target"], env["platform"], env["target"]
         ),
         source=sources,
     )
 else:
     library = env.SharedLibrary(
-        "demo/bin/libgdexample{}{}".format(env["suffix"], env["SHLIBSUFFIX"]),
+        "addons/blueplug/lib/libblueplug{}{}".format(env["suffix"], env["SHLIBSUFFIX"]),
         source=sources,
     )
 
