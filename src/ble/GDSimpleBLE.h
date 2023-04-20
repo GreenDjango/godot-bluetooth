@@ -3,6 +3,7 @@
 
 #include <godot_cpp/godot.hpp>
 #include <godot_cpp/classes/node.hpp>
+#include <godot_cpp/variant/packed_byte_array.hpp>
 
 #include <simpleble/Adapter.h>
 
@@ -12,7 +13,7 @@
 namespace godot {
 
 	class GDSimpleBLE : public Node {
-		GODOT_CLASS(GDSimpleBLE, Node);
+		GDCLASS(GDSimpleBLE, Node);
 
 		protected:
     		static void _bind_methods();
@@ -431,14 +432,14 @@ namespace godot {
 			 * @param p_address the peripheral address
 			 * @param p_payload the payload
 			 */
-			void emit_peripheral_notify(const String& p_address, const PoolByteArray& p_payload);
+			void emit_peripheral_notify(const String& p_address, const PackedByteArray& p_payload);
 			
 			/**
 			 * Emit peripheral indicate
 			 * @param p_address the peripheral address
 			 * @param p_payload the payload
 			 */
-			void emit_peripheral_indicate(const String& p_address, const PoolByteArray& p_payload);
+			void emit_peripheral_indicate(const String& p_address, const PackedByteArray& p_payload);
 
 			/**
 			 * Emit peripheral found

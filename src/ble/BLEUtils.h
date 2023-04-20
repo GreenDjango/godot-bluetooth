@@ -4,6 +4,7 @@
 #include <godot_cpp/godot.hpp>
 #include <godot_cpp/core/class_db.hpp>
 #include <godot_cpp/variant/dictionary.hpp>
+#include <godot_cpp/variant/packed_byte_array.hpp>
 
 #include <simpleble/Peripheral.h>
 
@@ -68,11 +69,11 @@ class BLEUtils {
 		static const Dictionary get_services(std::vector<SimpleBLE::Service>& p_services);
 
 		/**
-		 * Transform ByteArray to PoolByteArray
+		 * Transform ByteArray to PackedByteArray
 		 * @param p_bytes SimpleBLE ByteArray
-		 * @return Godot PoolByteArray
+		 * @return Godot PackedByteArray
 		 */
-		static const PoolByteArray string_to_byte_array(const SimpleBLE::ByteArray& p_bytes);
+		static const PackedByteArray string_to_byte_array(const SimpleBLE::ByteArray& p_bytes);
 
 		/**
 		 * Get status from SimpleBLE exception

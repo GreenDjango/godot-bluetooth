@@ -41,8 +41,8 @@ const Dictionary BLEUtils::get_services(std::vector<SimpleBLE::Service>& p_servi
 	return l_services;
 }
 
-const PoolByteArray BLEUtils::string_to_byte_array(const SimpleBLE::ByteArray& p_bytes) {
-	PoolByteArray l_byte_array;
+const PackedByteArray BLEUtils::string_to_byte_array(const SimpleBLE::ByteArray& p_bytes) {
+	PackedByteArray l_byte_array;
 
 	char const *l_bytes = p_bytes.c_str();
 	for (int l_index = 0; l_index < p_bytes.size(); l_index++) {

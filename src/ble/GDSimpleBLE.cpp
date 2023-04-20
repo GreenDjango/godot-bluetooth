@@ -1,7 +1,6 @@
 #include "GDSimpleBLE.h"
 
 #include <godot_cpp/godot.hpp>
-#include <godot_cpp/core/class_db.hpp>
 #include <godot_cpp/variant/dictionary.hpp>
 
 #include "BLEUtils.h"
@@ -228,11 +227,11 @@ void GDSimpleBLE::emit_peripheral_status(const String& p_address, const BLEUtils
 	emit_signal("peripheral_status_updated", p_address, p_status, get_status_string(p_status), p_level);
 }
 
-void GDSimpleBLE::emit_peripheral_notify(const String& p_address, const PoolByteArray& p_payload) {
+void GDSimpleBLE::emit_peripheral_notify(const String& p_address, const PackedByteArray& p_payload) {
 	emit_signal("peripheral_notified", p_address, p_payload);
 }
 
-void GDSimpleBLE::emit_peripheral_indicate(const String& p_address, const PoolByteArray& p_payload) {
+void GDSimpleBLE::emit_peripheral_indicate(const String& p_address, const PackedByteArray& p_payload) {
 	emit_signal("peripheral_indicated", p_address, p_payload);
 }
 
