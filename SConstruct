@@ -1,10 +1,44 @@
-#!python
+#!/usr/bin/env python
+
 import os
-import platform
-import sys
 import subprocess
 
-# For the reference:
+env = SConscript("thirdparty/godot-cpp/SConstruct")
+
+
+def cmake(base_dir):
+    cmake_target = "Debug"
+    if env["target"] == "template_release":
+        cmake_target = "Release"
+    if not os.path.isdir(f"{base_dir}/{env['target']}"):
+        cmd_args = []
+        if env["platform"] == "osx":
+            cmd_args.append("-DCMAKE_OSX_ARCHITECTURES=arm64;x86_64")
+        subprocess.call(
+            [
+                "cmake",
+                f"-S{base_dir}",
+                f"-B{base_dir}/{env['target']}",
+                f"-DCMAKE_BUILD_TYPE={cmake_target}",
+            ]
+            + cmd_args,
+        )
+    subprocess.call(
+        [
+            "cmake",
+            "--build",
+            f"{base_dir}/{env['target']}",
+            "--config",
+            f"{cmake_target}",
+            f"-j{env.GetOption('num_jobs')}",
+            "--",
+            "--silent",
+        ],
+    )
+    env.Append(LIBPATH=[env.Dir(f"{base_dir}/{env['target']}/lib/")])
+
+
+# For reference:
 # - CCFLAGS are compilation flags shared between C and C++
 # - CFLAGS are for C-specific compilation flags
 # - CXXFLAGS are for C++-specific compilation flags
@@ -12,85 +46,42 @@ import subprocess
 # - CPPDEFINES are for pre-processor defines
 # - LINKFLAGS are for linking flags
 
-###############
-## FUNCTIONS ##
-###############
+env.Append(
+    CPPPATH=[
+        "src/",
+        "thirdparty/simple-ble/simpleble/include",
+        f"thirdparty/simple-ble/simpleble/{env['target']}/export",
+    ]
+)
 
-# Execute system 
-def sys_exec(args):
-    if platform.system() == "Windows":
-        args.insert(0, "powershell.exe")
-    proc = subprocess.Popen(args, stdout=subprocess.PIPE, text=True)
-    (out, err) = proc.communicate()
-    return out.rstrip("\r\n").lstrip()
-
-# Compile using CMake
-def compile(base_dir):
-    env.Append(CPPPATH=["{}/{}/export".format(base_dir, env["target"])])
-    sys_exec(["mkdir", "{}/{}".format(base_dir, env["target"])])
-    if env["platform"] == "osx":
-        sys_exec(["cmake", "-DCMAKE_OSX_ARCHITECTURES=arm64;x86_64", "-DCMAKE_BUILD_TYPE={}".format(cmake_target), "-B{}/{}".format(base_dir, env["target"]), "-S{}".format(base_dir)])
-    else:
-        sys_exec(["cmake", "-DCMAKE_BUILD_TYPE={}".format(cmake_target), "-B{}/{}".format(base_dir, env["target"]), "-S{}".format(base_dir)])
-    sys_exec(["cmake", "--build", "{}/{}".format(base_dir, env["target"]), "--config", cmake_target])
-    if env["platform"] == "windows":
-        env.Append(LIBPATH=[env.Dir("{}/{}/lib/{}/".format(simpleble_base, env["target"], cmake_target))])
-    else:
-        env.Append(LIBPATH=[env.Dir("{}/{}/lib/".format(base_dir, env["target"]))])
-
-##########
-## MAIN ##
-##########
-
-env = SConscript("thirdparty/godot-cpp/SConstruct")
-
-simpleble_base = "thirdparty/simple-ble/simpleble"
-simplebluez_base = "thirdparty/simple-ble/simplebluez"
-simpledbus_base = "thirdparty/simple-ble/simpledbus"
-
-# Clean all build folders
-if GetOption("clean"):
-    sys_exec(["rm", "-fr", "{}/release".format(simpleble_base)])
-    sys_exec(["rm", "-fr", "{}/release".format(simplebluez_base)])
-    sys_exec(["rm", "-fr", "{}/release".format(simpledbus_base)])
-    sys_exec(["rm", "-fr", "{}/debug".format(simpleble_base)])
-    sys_exec(["rm", "-fr", "{}/debug".format(simplebluez_base)])
-    sys_exec(["rm", "-fr", "{}/debug".format(simpledbus_base)])
+if env["platform"] == "macos" or env["platform"] == "ios":
+    env.Append(LIBS=["libsimpleble.a"])
+elif env["platform"] == "windows":
+    env.Append(LIBS=["simpleble.lib"])
+elif env["platform"] == "linux":
+    env.Append(LIBS=["libdbus-1.so", "libsimpledbus.a", "libsimplebluez.a", "libsimpleble-debug.a"])
+    cmake("thirdparty/simple-ble/simpledbus")
+    cmake("thirdparty/simple-ble/simplebluez")
+elif env["platform"] == "android":
+    raise ValueError("Platform android not implemented.")
+elif env["platform"] == "javascript":
+    raise ValueError("Platform javascript not implemented.")
 else:
-     # Sources
-    env.Append(CPPPATH=["src/ble","src/godot_binding"])
+    raise ValueError(f"Platform not supported: {env['platform']}.")
 
-    if env["target"] == "debug":
-        cmake_target = "Debug"
-    else:
-        cmake_target = "Release"
+cmake("thirdparty/simple-ble/simpleble")
 
-    # Check our platform specifics
-    if env['platform'] == "osx":
-        env.Append(CPPPATH=["{}/include".format(simpleble_base)])
-        env.Append(LIBS=["libsimpleble.a"])
+sources = Glob("src/**/*.cpp")
 
-    elif env['platform'] in ('x11', 'linux'):
-        env.Append(CPPPATH=["{}/include".format(simpleble_base)])
-        env.Append(LIBS=["libsimpleble.a"])
-        env.Append(LIBS=["libsimplebluez.a"])
-        env.Append(LIBS=["libsimpledbus.a"])
-        env.Append(LIBS=["libdbus-1.so"])
-        
-        # SimpleBluez
-        compile(simplebluez_base)
+if env["platform"] == "macos":
+    library = env.SharedLibrary(
+        f"addons/blueplug/lib/libblueplug.{env['platform']}.{env['target']}.framework/libblueplug.{env['platform']}.{env['target']}",
+        source=sources,
+    )
+else:
+    library = env.SharedLibrary(
+        f"addons/blueplug/lib/libblueplug{env['suffix']}{env['SHLIBSUFFIX']}",
+        source=sources,
+    )
 
-        # SimpleDBus
-        compile(simpledbus_base)
-
-    elif env['platform'] == "windows":
-        env.Append(CPPPATH=["{}/include".format(simpleble_base)])
-        env.Append(LIBS=["simpleble.lib"])
-
-    # SimpleBLE
-    compile(simpleble_base)
-
-    # Create lib
-    sources = Glob("src/**/*.cpp")
-    library = env.SharedLibrary("addons/blueplug/lib/libblueplug{}{}".format(env['platform'], env["SHLIBSUFFIX"]), source=sources)
-    Default(library)
+Default(library)

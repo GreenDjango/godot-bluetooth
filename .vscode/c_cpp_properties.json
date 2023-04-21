@@ -6,8 +6,7 @@
                 "${default}",
                 "${workspaceFolder}/*",
                 "${workspaceFolder}/src/*",
-                "/usr/include/qt6/**",
-                "${workspaceFolder}/../godot-3.4/**"
+                "/usr/include/qt6/**"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/clang",

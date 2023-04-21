@@ -10,7 +10,7 @@
 #include "register_types.h"
 
 #include "gdexample.h"
-#include "GDSimpleBLE.h"
+#include "ble/GDSimpleBLE.h"
 
 #include <gdextension_interface.h>
 #include <godot_cpp/core/defs.hpp>
