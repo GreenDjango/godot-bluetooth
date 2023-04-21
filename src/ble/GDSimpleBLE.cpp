@@ -10,6 +10,7 @@
 using namespace godot;
 
 GDSimpleBLE::GDSimpleBLE() : m_adapter(nullptr) {
+	_init();
 }
 
 GDSimpleBLE::~GDSimpleBLE() {
@@ -45,7 +46,8 @@ void GDSimpleBLE::_bind_methods() {
 	 */
 
 	// Bind adapter actions
-	ClassDB::bind_method(D_METHOD("init"), &GDSimpleBLE::init);
+	ClassDB::bind_method(D_METHOD("_init"), &GDSimpleBLE::_init);
+	ClassDB::bind_method(D_METHOD("init_adapter"), &GDSimpleBLE::init_adapter);
 	ClassDB::bind_method(D_METHOD("start_scan"), &GDSimpleBLE::scan_start);
 	ClassDB::bind_method(D_METHOD("stop_scan"), &GDSimpleBLE::scan_stop);
 
@@ -253,7 +255,7 @@ void GDSimpleBLE::emit_peripheral_updated(const String& p_address) {
 //	Adapter actions
 //###############################################################
 
-bool GDSimpleBLE::init(const String p_address) {
+bool GDSimpleBLE::init_adapter(const String p_address) {
 	// Only one adapter, reset the previous one
 	if (m_adapter) {
 		try {

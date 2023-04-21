@@ -72,7 +72,7 @@ namespace godot {
 			 * @param p_address adapter address
 			 * @return true if initialized
 			 */
-			bool init(const String p_address = "");
+			bool init_adapter(const String p_address = "");
 
 			/**
 			 * Start scan

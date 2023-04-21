@@ -9,7 +9,6 @@
 
 #include "register_types.h"
 
-#include "gdexample.h"
 #include "ble/GDSimpleBLE.h"
 
 #include <gdextension_interface.h>
