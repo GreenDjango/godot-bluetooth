@@ -2,6 +2,7 @@
 
 #include <godot_cpp/godot.hpp>
 #include <godot_cpp/variant/dictionary.hpp>
+#include <godot_cpp/core/class_db.hpp>
 
 #include "BLEUtils.h"
 #include "BLEPeripheral.h"
@@ -17,88 +18,85 @@ GDSimpleBLE::~GDSimpleBLE() {
 	}
 }
 
-void GDSimpleBLE::_bind_methods() {
-}
-
 //###############################################################
 //	Godot methods
 //###############################################################
 
-void GDSimpleBLE::_register_methods() {
+void GDSimpleBLE::_bind_methods() {
+	/**
+	 * General
+	 */
+
+	// Bind general getters
+	ClassDB::bind_method(D_METHOD("get_adapters"), &GDSimpleBLE::get_adapters);
+	ClassDB::bind_method(D_METHOD("adapters"), &GDSimpleBLE::get_adapters);
+	ClassDB::bind_method(D_METHOD("peripherals"), &GDSimpleBLE::get_peripherals);
+	ClassDB::bind_method(D_METHOD("connected_peripherals"), &GDSimpleBLE::get_connected_peripherals);
+	ClassDB::bind_method(D_METHOD("company_name"), &GDSimpleBLE::get_company_name);
+	ClassDB::bind_method(D_METHOD("status_string"), &GDSimpleBLE::get_status_string);
+	ClassDB::bind_method(D_METHOD("status_level_string"), &GDSimpleBLE::get_status_level_string);
 	
-	// /**
-	//  * General
-	//  */
+	// Error status signal
+	ADD_SIGNAL(MethodInfo("adapter_status_updated", PropertyInfo(Variant::INT, "code"), PropertyInfo(Variant::STRING, "what"), PropertyInfo(Variant::STRING, "level")));
+	ADD_SIGNAL(MethodInfo("peripheral_status_updated", PropertyInfo(Variant::STRING, "address"), PropertyInfo(Variant::INT, "code"), PropertyInfo(Variant::STRING, "what"), PropertyInfo(Variant::STRING, "level")));
 
-	// // Bind general getters
-	// register_method("adapters", &GDSimpleBLE::get_adapters);
-	// register_method("peripherals", &GDSimpleBLE::get_peripherals);
-	// register_method("connected_peripherals", &GDSimpleBLE::get_connected_peripherals);
-	// register_method("company_name", &GDSimpleBLE::get_company_name);
-	// register_method("status_string", &GDSimpleBLE::get_status_string);
-	// register_method("status_level_string", &GDSimpleBLE::get_status_level_string);
+	/**
+	 * Adapter
+	 */
+
+	// Bind adapter actions
+	ClassDB::bind_method(D_METHOD("init"), &GDSimpleBLE::init);
+	ClassDB::bind_method(D_METHOD("start_scan"), &GDSimpleBLE::scan_start);
+	ClassDB::bind_method(D_METHOD("stop_scan"), &GDSimpleBLE::scan_stop);
+
+	// Bind adapter getters
+	ClassDB::bind_method(D_METHOD("identifier"), &GDSimpleBLE::get_identifier);
+	ClassDB::bind_method(D_METHOD("address"), &GDSimpleBLE::get_address);
+	ClassDB::bind_method(D_METHOD("scan_is_active"), &GDSimpleBLE::get_scan_is_active);
+
+	// Adapter signals
+	ADD_SIGNAL(MethodInfo("scan_started"));
+	ADD_SIGNAL(MethodInfo("scan_stopped"));
+	ADD_SIGNAL(MethodInfo("peripheral_found", PropertyInfo(Variant::STRING, "address")));
+	ADD_SIGNAL(MethodInfo("peripheral_updated", PropertyInfo(Variant::STRING, "address")));
+	ADD_SIGNAL(MethodInfo("peripheral_connected", PropertyInfo(Variant::STRING, "address")));
+	ADD_SIGNAL(MethodInfo("peripheral_disconnected", PropertyInfo(Variant::STRING, "address")));
+
+	/**
+	 * Peripheral
+	 */
 	
-	// // Error status signal
-	// register_signal<GDSimpleBLE>((char *)"adapter_status_updated", "code", GODOT_VARIANT_TYPE_INT, "what", GODOT_VARIANT_TYPE_STRING, "level", GODOT_VARIANT_TYPE_STRING);
-	// register_signal<GDSimpleBLE>((char *)"peripheral_status_updated", "address", GODOT_VARIANT_TYPE_STRING, "code", GODOT_VARIANT_TYPE_INT, "what", GODOT_VARIANT_TYPE_STRING, "level", GODOT_VARIANT_TYPE_STRING);
-
-	// /**
-	//  * Adapter
-	//  */
-
-	// // Bind adapter actions
-	// register_method("init", &GDSimpleBLE::init);
-	// register_method("start_scan", &GDSimpleBLE::scan_start);
-	// register_method("stop_scan", &GDSimpleBLE::scan_stop);
-
-	// // Bind adapter getters
-	// register_method("identifier", &GDSimpleBLE::get_identifier);
-	// register_method("address", &GDSimpleBLE::get_address);
-	// register_method("scan_is_active", &GDSimpleBLE::get_scan_is_active);
-
-	// // Adapter signals
-	// register_signal<GDSimpleBLE>((char *)"scan_started");
-	// register_signal<GDSimpleBLE>((char *)"scan_stopped");
-	// register_signal<GDSimpleBLE>((char *)"peripheral_found", "address", GODOT_VARIANT_TYPE_STRING);
-	// register_signal<GDSimpleBLE>((char *)"peripheral_updated", "address", GODOT_VARIANT_TYPE_STRING);
-	// register_signal<GDSimpleBLE>((char *)"peripheral_connected", "address", GODOT_VARIANT_TYPE_STRING);
-	// register_signal<GDSimpleBLE>((char *)"peripheral_disconnected", "address", GODOT_VARIANT_TYPE_STRING);
-
-	// /**
-	//  * Peripheral
-	//  */
+	// Bind peripheral getters
+	ClassDB::bind_method(D_METHOD("delete_peripheral"), &GDSimpleBLE::delete_peripheral);
+	ClassDB::bind_method(D_METHOD("is_peripheral_exists"), &GDSimpleBLE::get_is_peripheral_exists);
+	ClassDB::bind_method(D_METHOD("peripheral_identifier"), &GDSimpleBLE::get_peripheral_identifier);
+	ClassDB::bind_method(D_METHOD("peripheral_rssi"), &GDSimpleBLE::get_peripheral_rssi);
+	ClassDB::bind_method(D_METHOD("is_peripheral_connected"), &GDSimpleBLE::get_is_peripheral_connected);
+	ClassDB::bind_method(D_METHOD("is_peripheral_connectable"), &GDSimpleBLE::get_is_peripheral_connectable);
+	ClassDB::bind_method(D_METHOD("peripheral_services_count"), &GDSimpleBLE::get_peripheral_services_count);
+	ClassDB::bind_method(D_METHOD("peripheral_services"), &GDSimpleBLE::get_peripheral_services);
+	ClassDB::bind_method(D_METHOD("peripheral_manufacturer_data"), &GDSimpleBLE::get_peripheral_manufacturer_data);
+	ClassDB::bind_method(D_METHOD("is_peripheral_paired"), &GDSimpleBLE::get_is_peripheral_paired);
+	ClassDB::bind_method(D_METHOD("peripheral_has_no_identifier"), &GDSimpleBLE::get_peripheral_has_no_identifier);
 	
-	// // Bind peripheral getters
-	// register_method("delete_peripheral", &GDSimpleBLE::delete_peripheral);
-	// register_method("is_peripheral_exists", &GDSimpleBLE::get_is_peripheral_exists);
-	// register_method("peripheral_identifier", &GDSimpleBLE::get_peripheral_identifier);
-	// register_method("peripheral_rssi", &GDSimpleBLE::get_peripheral_rssi);
-	// register_method("is_peripheral_connected", &GDSimpleBLE::get_is_peripheral_connected);
-	// register_method("is_peripheral_connectable", &GDSimpleBLE::get_is_peripheral_connectable);
-	// register_method("peripheral_services_count", &GDSimpleBLE::get_peripheral_services_count);
-	// register_method("peripheral_services", &GDSimpleBLE::get_peripheral_services);
-	// register_method("peripheral_manufacturer_data", &GDSimpleBLE::get_peripheral_manufacturer_data);
-	// register_method("is_peripheral_paired", &GDSimpleBLE::get_is_peripheral_paired);
-	// register_method("peripheral_has_no_identifier", &GDSimpleBLE::get_peripheral_has_no_identifier);
-	
-	// // Bind peripheral actions
-	// register_method("connect_peripheral", &GDSimpleBLE::connect_peripheral);
-	// register_method("disconnect_peripheral", &GDSimpleBLE::disconnect_peripheral);
-	// register_method("unpair_peripheral", &GDSimpleBLE::unpair_peripheral);
+	// Bind peripheral actions
+	ClassDB::bind_method(D_METHOD("connect_peripheral"), &GDSimpleBLE::connect_peripheral);
+	ClassDB::bind_method(D_METHOD("disconnect_peripheral"), &GDSimpleBLE::disconnect_peripheral);
+	ClassDB::bind_method(D_METHOD("unpair_peripheral"), &GDSimpleBLE::unpair_peripheral);
 
-	// // Bind peripheral BLE interactions
-	// register_method("read", &GDSimpleBLE::read);
-	// register_method("read_descriptor", &GDSimpleBLE::read_descriptor);
-	// register_method("write_request", &GDSimpleBLE::write_request);
-	// register_method("write_command", &GDSimpleBLE::write_command);
-	// register_method("write_descriptor", &GDSimpleBLE::write_descriptor);
-	// register_method("notify", &GDSimpleBLE::notify);
-	// register_method("indicate", &GDSimpleBLE::indicate);
-	// register_method("unsubscribe", &GDSimpleBLE::unsubscribe);
+	// Bind peripheral BLE interactions
+	ClassDB::bind_method(D_METHOD("read"), &GDSimpleBLE::read);
+	ClassDB::bind_method(D_METHOD("read_descriptor"), &GDSimpleBLE::read_descriptor);
+	ClassDB::bind_method(D_METHOD("write_request"), &GDSimpleBLE::write_request);
+	ClassDB::bind_method(D_METHOD("write_command"), &GDSimpleBLE::write_command);
+	ClassDB::bind_method(D_METHOD("write_descriptor"), &GDSimpleBLE::write_descriptor);
+	ClassDB::bind_method(D_METHOD("notify"), &GDSimpleBLE::notify);
+	ClassDB::bind_method(D_METHOD("indicate"), &GDSimpleBLE::indicate);
+	ClassDB::bind_method(D_METHOD("unsubscribe"), &GDSimpleBLE::unsubscribe);
 
-	// // Peripheral signals
-	// register_signal<GDSimpleBLE>((char *)"peripheral_notified", "address", GODOT_VARIANT_TYPE_STRING, "payload", GODOT_VARIANT_TYPE_POOL_BYTE_ARRAY);
-	// register_signal<GDSimpleBLE>((char *)"peripheral_indicated", "address", GODOT_VARIANT_TYPE_STRING, "payload", GODOT_VARIANT_TYPE_POOL_BYTE_ARRAY);
+	// Peripheral signals
+	ADD_SIGNAL(MethodInfo("peripheral_notified", PropertyInfo(Variant::STRING, "address"), PropertyInfo(Variant::PACKED_BYTE_ARRAY, "payload")));
+	ADD_SIGNAL(MethodInfo("peripheral_indicated", PropertyInfo(Variant::STRING, "address"), PropertyInfo(Variant::PACKED_BYTE_ARRAY, "payload")));
 }
 
 void GDSimpleBLE::_init() {
