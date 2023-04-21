@@ -32,7 +32,7 @@ def cmake(base_dir):
             f"{cmake_target}",
             f"-j{env.GetOption('num_jobs')}",
             "--",
-            # "--silent",
+            "--silent",
         ],
     )
     env.Append(LIBPATH=[env.Dir(f"{base_dir}/{env['target']}/lib/")])
