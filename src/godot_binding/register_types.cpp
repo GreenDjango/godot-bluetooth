@@ -34,7 +34,7 @@ void uninitialize_example_module(ModuleInitializationLevel p_level) {
 
 extern "C" {
 // Initialization.
-GDExtensionBool GDE_EXPORT example_library_init(const GDExtensionInterface *p_interface, const GDExtensionClassLibraryPtr p_library, GDExtensionInitialization *r_initialization) {
+GDExtensionBool GDE_EXPORT blueplug_library_init(const GDExtensionInterface *p_interface, const GDExtensionClassLibraryPtr p_library, GDExtensionInitialization *r_initialization) {
     godot::GDExtensionBinding::InitObject init_obj(p_interface, p_library, r_initialization);
 
     init_obj.register_initializer(initialize_example_module);
