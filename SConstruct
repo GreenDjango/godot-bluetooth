@@ -3,14 +3,14 @@
 import os
 import subprocess
 
-env = SConscript("thirdparty/godot-cpp/SConstruct")
-
 
 def cmake(base_dir, cmd_args=[]):
     cmake_target = "Debug"
     if env["target"] == "template_release":
         cmake_target = "Release"
-    if not os.path.isdir(f"{base_dir}/{env['target']}"):
+    build_dir = f"{base_dir}/build{env['suffix']}"
+
+    if not os.path.isdir(build_dir):
         _cmd_args = [] + cmd_args
         if env["platform"] == "macos":
             _cmd_args.append("-DCMAKE_OSX_ARCHITECTURES=arm64;x86_64")
@@ -18,7 +18,7 @@ def cmake(base_dir, cmd_args=[]):
             [
                 "cmake",
                 f"-S{base_dir}",
-                f"-B{base_dir}/{env['target']}",
+                f"-B{build_dir}",
                 f"-DCMAKE_BUILD_TYPE={cmake_target}",
             ]
             + _cmd_args,
@@ -27,7 +27,7 @@ def cmake(base_dir, cmd_args=[]):
         [
             "cmake",
             "--build",
-            f"{base_dir}/{env['target']}",
+            f"{build_dir}",
             "--config",
             f"{cmake_target}",
             f"-j{env.GetOption('num_jobs')}",
@@ -35,7 +35,7 @@ def cmake(base_dir, cmd_args=[]):
             "--silent",
         ],
     )
-    env.Append(LIBPATH=[env.Dir(f"{base_dir}/{env['target']}/lib/")])
+    env.Append(LIBPATH=[env.Dir(f"{build_dir}/lib/")])
 
 
 # For reference:
@@ -46,11 +46,13 @@ def cmake(base_dir, cmd_args=[]):
 # - CPPDEFINES are for pre-processor defines
 # - LINKFLAGS are for linking flags
 
+env = SConscript("thirdparty/godot-cpp/SConstruct")
+
 env.Append(
     CPPPATH=[
         "src/",
         "thirdparty/simple-ble/simpleble/include",
-        f"thirdparty/simple-ble/simpleble/{env['target']}/export",
+        f"thirdparty/simple-ble/simpleble/build{env['suffix']}/export",
     ]
 )
 
@@ -68,7 +70,7 @@ elif env["platform"] == "linux":
             "libdbus-1.so",
             "libsimpledbus.a",
             "libsimplebluez.a",
-            "libsimpleble-debug.a",
+            f"libsimpleble{ '' if env['target'] == 'template_release' else '-debug'}.a",
         ]
     )
     cmake("thirdparty/simple-ble/simpledbus")

@@ -8,7 +8,7 @@
 \*****************************************************************************/
 
 #include "register_types.h"
-#include "ble/GDSimpleBLE.h"
+#include "blueplug.h"
 
 #include <gdextension_interface.h>
 #include <godot_cpp/core/class_db.hpp>
@@ -22,7 +22,7 @@ void initialize_blueplug_module(ModuleInitializationLevel p_level) {
 		return;
 	}
 
-	ClassDB::register_class<GDSimpleBLE>();
+	ClassDB::register_class<BluePlug>();
 }
 
 void uninitialize_blueplug_module(ModuleInitializationLevel p_level) {
