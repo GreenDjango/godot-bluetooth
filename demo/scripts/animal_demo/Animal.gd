@@ -10,10 +10,10 @@ var animal_id := 0
 var to_position := .0
 var to_direction := 0
 
-onready var sprite = $AnimatedSprite
-onready var label = $Front/Label
-onready var panel = $Front/Panel
-onready var description = $Front/Panel/VBoxContainer/Description
+@onready var sprite = $AnimatedSprite
+@onready var label = $Front/Label
+@onready var panel = $Front/Panel
+@onready var description = $Front/Panel/VBoxContainer/Description
 
 func setup(_device_name: String, _device_address: String, _device_type: String):
 	device_name = _device_name

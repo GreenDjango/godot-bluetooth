@@ -17,7 +17,7 @@ config/icon="res://assets/icon.png"
 
 [autoload]
 
-BluePlug="*res://addons/blueplug/autoload.gd"
+BluePlugUtils="*res://addons/blueplug/autoload.gd"
 
 [display]
 

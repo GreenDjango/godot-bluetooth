@@ -1,10 +1,10 @@
 extends Control
 
-var gdsmble = GDSimpleBLE.new();
+var blueplug = BluePlug.new()
 
 func _ready():
-	print(gdsmble.adapters())
-	gdsmble.init_adapter(gdsmble.adapters()[0])
-	print(gdsmble.start_scan())
-	print(gdsmble.peripherals())
-	print(gdsmble.scan_is_active())
+	print(blueplug.adapters())
+	blueplug.init_adapter(blueplug.adapters()[0])
+	print(blueplug.start_scan())
+	print(blueplug.peripherals())
+	print(blueplug.scan_is_active())

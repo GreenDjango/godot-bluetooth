@@ -1,7 +1,7 @@
 @tool
 extends EditorPlugin
 
-const AUTOLOAD_NAME = "BluePlug"
+const AUTOLOAD_NAME = "BluePlugUtils"
 
 # Hooks
 

@@ -1,10 +1,10 @@
 extends Node2D
 
 var time_elapse := 0.0
-const animal_scene := preload("res://src/Animal.tscn")
+const animal_scene := preload("res://scenes/animal_demo/Animal.tscn")
 
-onready var animals_node := $World/Animals
-onready var bluetooth := Bluetooth.new()
+@onready var animals_node := $World/Animals
+@onready var bluetooth := Bluetooth.new()
 
 func _ready():
 	randomize()

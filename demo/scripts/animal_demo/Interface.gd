@@ -1,7 +1,7 @@
 extends Control
 
-onready var bluetooth := Bluetooth.new()
-onready var timer := Timer.new()
+@onready var bluetooth := Bluetooth.new()
+@onready var timer := Timer.new()
 
 func _ready():
 	timer.one_shot = true
