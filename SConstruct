@@ -6,14 +6,14 @@ import subprocess
 env = SConscript("thirdparty/godot-cpp/SConstruct")
 
 
-def cmake(base_dir):
+def cmake(base_dir, cmd_args=[]):
     cmake_target = "Debug"
     if env["target"] == "template_release":
         cmake_target = "Release"
     if not os.path.isdir(f"{base_dir}/{env['target']}"):
-        cmd_args = []
-        if env["platform"] == "osx":
-            cmd_args.append("-DCMAKE_OSX_ARCHITECTURES=arm64;x86_64")
+        _cmd_args = [] + cmd_args
+        if env["platform"] == "macos":
+            _cmd_args.append("-DCMAKE_OSX_ARCHITECTURES=arm64;x86_64")
         subprocess.call(
             [
                 "cmake",
@@ -21,7 +21,7 @@ def cmake(base_dir):
                 f"-B{base_dir}/{env['target']}",
                 f"-DCMAKE_BUILD_TYPE={cmake_target}",
             ]
-            + cmd_args,
+            + _cmd_args,
         )
     subprocess.call(
         [
@@ -56,20 +56,35 @@ env.Append(
 
 if env["platform"] == "macos" or env["platform"] == "ios":
     env.Append(LIBS=["libsimpleble.a"])
+    cmake("thirdparty/simple-ble/simpleble")
+
 elif env["platform"] == "windows":
     env.Append(LIBS=["simpleble.lib"])
+    cmake("thirdparty/simple-ble/simpleble")
+
 elif env["platform"] == "linux":
-    env.Append(LIBS=["libdbus-1.so", "libsimpledbus.a", "libsimplebluez.a", "libsimpleble-debug.a"])
+    env.Append(
+        LIBS=[
+            "libdbus-1.so",
+            "libsimpledbus.a",
+            "libsimplebluez.a",
+            "libsimpleble-debug.a",
+        ]
+    )
     cmake("thirdparty/simple-ble/simpledbus")
     cmake("thirdparty/simple-ble/simplebluez")
+    cmake("thirdparty/simple-ble/simpleble")
+
 elif env["platform"] == "android":
     raise ValueError("Platform android not implemented.")
+
 elif env["platform"] == "javascript":
+    # cmake("thirdparty/simple-ble/simpleble", ["-DSIMPLEBLE_PLAIN=true"])
     raise ValueError("Platform javascript not implemented.")
+
 else:
     raise ValueError(f"Platform not supported: {env['platform']}.")
 
-cmake("thirdparty/simple-ble/simpleble")
 
 sources = Glob("src/**/*.cpp")
 
