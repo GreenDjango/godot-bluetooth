@@ -10,20 +10,21 @@
 #ifndef BLUEPLUG_PACKET_PEER_H
 #define BLUEPLUG_PACKET_PEER_H
 
-#include <godot_cpp/classes/multiplayer_peer.hpp>
-#include <godot_cpp/classes/packet_peer.hpp>
+#include <godot_cpp/classes/packet_peer_extension.hpp>
 
 namespace godot {
 
-class BluePlugPacketPeer : public PacketPeer {
-	GDCLASS(BluePlugPacketPeer, PacketPeer);
+class BluePlugPacketPeer : public PacketPeerExtension {
+	GDCLASS(BluePlugPacketPeer, PacketPeerExtension);
 
 protected:
 	static void _bind_methods();
 
-// public:
-// 	BluePlugPacketPeer();
-// 	~BluePlugPacketPeer();
+public:
+	// int32_t _get_available_packet_count() const override;
+	// int32_t _get_max_packet_size() const override;
+	Error _get_packet(const uint8_t **r_buffer, int32_t *r_buffer_size) override;
+	Error _put_packet(const uint8_t *p_buffer, int32_t p_buffer_size) override;
 };
 
 } //namespace godot

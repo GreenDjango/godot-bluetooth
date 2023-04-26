@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://scripts/multiplayer/main.gd" id="1_ht5rg"]
 
-[node name="main" type="Control"]
+[node name="Main" type="Control"]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -10,3 +10,36 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_ht5rg")
+
+[node name="Start server" type="Button" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -122.5
+offset_top = -15.5
+offset_right = -23.5
+offset_bottom = 15.5
+grow_horizontal = 2
+grow_vertical = 2
+text = "Start server"
+
+[node name="Start client" type="Button" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 29.5
+offset_top = -15.5
+offset_right = 122.5
+offset_bottom = 15.5
+grow_horizontal = 2
+grow_vertical = 2
+text = "Start client"
+
+[connection signal="pressed" from="Start server" to="." method="_on_start_server_pressed"]
+[connection signal="pressed" from="Start client" to="." method="_on_start_client_pressed"]

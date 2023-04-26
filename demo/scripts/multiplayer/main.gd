@@ -1,6 +1,6 @@
 extends Control
 
-var peer := WebSocketMultiplayerPeer.new()
+var peer := BluePlugMultiplayerPeer.new()
 var hostname := "host"
 
 func _init():
@@ -28,12 +28,13 @@ func _peer_connected(id):
 func _peer_disconnected(id):
 	print("Disconnected %d" % id)
 
-func _on_Host_pressed():
+func _on_start_server_pressed():
 	multiplayer.multiplayer_peer = null
-	# peer.create_server(DEF_PORT)
+	peer.create_server()
 	multiplayer.multiplayer_peer = peer
 
-func _on_Connect_pressed():
+
+func _on_start_client_pressed():
 	multiplayer.multiplayer_peer = null
-	# peer.create_client("ws://" + "_host_edit.text" + ":" + str(DEF_PORT))
+	peer.create_client()
 	multiplayer.multiplayer_peer = peer

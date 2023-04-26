@@ -9,6 +9,8 @@
 
 #include "register_types.h"
 #include "blueplug.h"
+#include "blueplug_packet_peer.h"
+#include "blueplug_multiplayer_peer.h"
 
 #include <gdextension_interface.h>
 #include <godot_cpp/core/class_db.hpp>
@@ -23,6 +25,8 @@ void initialize_blueplug_module(ModuleInitializationLevel p_level) {
 	}
 
 	ClassDB::register_class<BluePlug>();
+	ClassDB::register_class<BluePlugPacketPeer>();
+	ClassDB::register_class<BluePlugMultiplayerPeer>();
 }
 
 void uninitialize_blueplug_module(ModuleInitializationLevel p_level) {

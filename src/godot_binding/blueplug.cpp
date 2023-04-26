@@ -17,7 +17,15 @@ using namespace godot;
 
 BluePlug::BluePlug() :
 		m_adapter(nullptr) {
-	_init();
+	try {
+		m_adapters = SimpleBLE::Adapter::get_adapters();
+		// Check if empty
+		if (m_adapters.empty()) {
+			ERR_PRINT("No bluetooth adapter found");
+		}
+	} catch (std::exception &l_exception) {
+		ERR_PRINT("Error while collecting bluetooth adapters (" + String(l_exception.what()) + ")");
+	}
 }
 
 BluePlug::~BluePlug() {
@@ -36,7 +44,6 @@ void BluePlug::_bind_methods() {
 	 */
 
 	// Bind general getters
-	ClassDB::bind_method(D_METHOD("get_adapters"), &BluePlug::get_adapters);
 	ClassDB::bind_method(D_METHOD("adapters"), &BluePlug::get_adapters);
 	ClassDB::bind_method(D_METHOD("peripherals"), &BluePlug::get_peripherals);
 	ClassDB::bind_method(D_METHOD("connected_peripherals"), &BluePlug::get_connected_peripherals);
@@ -53,7 +60,6 @@ void BluePlug::_bind_methods() {
 	 */
 
 	// Bind adapter actions
-	ClassDB::bind_method(D_METHOD("_init"), &BluePlug::_init);
 	ClassDB::bind_method(D_METHOD("init_adapter"), &BluePlug::init_adapter);
 	ClassDB::bind_method(D_METHOD("start_scan"), &BluePlug::scan_start);
 	ClassDB::bind_method(D_METHOD("stop_scan"), &BluePlug::scan_stop);
@@ -106,18 +112,6 @@ void BluePlug::_bind_methods() {
 	// Peripheral signals
 	ADD_SIGNAL(MethodInfo("peripheral_notified", PropertyInfo(Variant::STRING, "address"), PropertyInfo(Variant::PACKED_BYTE_ARRAY, "payload")));
 	ADD_SIGNAL(MethodInfo("peripheral_indicated", PropertyInfo(Variant::STRING, "address"), PropertyInfo(Variant::PACKED_BYTE_ARRAY, "payload")));
-}
-
-void BluePlug::_init() {
-	try {
-		m_adapters = SimpleBLE::Adapter::get_adapters();
-		// Check if empty
-		if (m_adapters.empty()) {
-			ERR_PRINT("No bluetooth adapter found");
-		}
-	} catch (std::exception &l_exception) {
-		ERR_PRINT("Error while collecting bluetooth adapters (" + String(l_exception.what()) + ")");
-	}
 }
 
 //###############################################################
