@@ -1,10 +1,13 @@
 extends Node2D
 
 var time_elapse := 0.0
-const animal_scene := preload("res://scenes/animal_demo/Animal.tscn")
+const animal_scene := preload("res://scenes/animal_demo/animal.tscn")
 
+var blueplug := BluePlug.new()
 @onready var animals_node := $World/Animals
-@onready var bluetooth := Bluetooth.new()
+
+func _init():
+	blueplug.init_adapter(blueplug.adapters()[0])
 
 func _ready():
 	randomize()
@@ -19,7 +22,7 @@ func _process(delta):
 
 func refresh_devices():
 	var animals := animals_node.get_children()
-	var devices_list := bluetooth.list_devices()
+	var devices_list := blueplug.peripherals()
 
 	for device in devices_list:
 		var exist := false

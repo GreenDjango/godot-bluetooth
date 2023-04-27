@@ -1,0 +1,181 @@
+[gd_scene load_steps=21 format=3 uid="uid://c714uk6unw46t"]
+
+[ext_resource type="Script" path="res://scripts/Animal.gd" id="1_kvb0y"]
+[ext_resource type="Texture2D" uid="uid://bc1wutpnwaxa4" path="res://assets/Tiny_Tiny_Heroes-Animals.png" id="2_wcs18"]
+
+[sub_resource type="RectangleShape2D" id="18"]
+size = Vector2(64, 64)
+
+[sub_resource type="AtlasTexture" id="10"]
+atlas = ExtResource("2_wcs18")
+region = Rect2(0, 256, 16, 16)
+
+[sub_resource type="AtlasTexture" id="11"]
+atlas = ExtResource("2_wcs18")
+region = Rect2(16, 256, 16, 16)
+
+[sub_resource type="AtlasTexture" id="12"]
+atlas = ExtResource("2_wcs18")
+region = Rect2(32, 256, 16, 16)
+
+[sub_resource type="AtlasTexture" id="13"]
+atlas = ExtResource("2_wcs18")
+region = Rect2(48, 256, 16, 16)
+
+[sub_resource type="AtlasTexture" id="1"]
+atlas = ExtResource("2_wcs18")
+region = Rect2(0, 240, 16, 16)
+
+[sub_resource type="AtlasTexture" id="2"]
+atlas = ExtResource("2_wcs18")
+region = Rect2(16, 240, 16, 16)
+
+[sub_resource type="AtlasTexture" id="3"]
+atlas = ExtResource("2_wcs18")
+region = Rect2(32, 240, 16, 16)
+
+[sub_resource type="AtlasTexture" id="4"]
+atlas = ExtResource("2_wcs18")
+region = Rect2(48, 240, 16, 16)
+
+[sub_resource type="AtlasTexture" id="14"]
+atlas = ExtResource("2_wcs18")
+region = Rect2(64, 16, 16, 16)
+
+[sub_resource type="AtlasTexture" id="15"]
+atlas = ExtResource("2_wcs18")
+region = Rect2(80, 16, 16, 16)
+
+[sub_resource type="AtlasTexture" id="16"]
+atlas = ExtResource("2_wcs18")
+region = Rect2(96, 16, 16, 16)
+
+[sub_resource type="AtlasTexture" id="17"]
+atlas = ExtResource("2_wcs18")
+region = Rect2(112, 16, 16, 16)
+
+[sub_resource type="AtlasTexture" id="6"]
+atlas = ExtResource("2_wcs18")
+region = Rect2(64, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="7"]
+atlas = ExtResource("2_wcs18")
+region = Rect2(80, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="8"]
+atlas = ExtResource("2_wcs18")
+region = Rect2(96, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="9"]
+atlas = ExtResource("2_wcs18")
+region = Rect2(112, 0, 16, 16)
+
+[sub_resource type="SpriteFrames" id="5"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("10")
+}, {
+"duration": 1.0,
+"texture": SubResource("11")
+}, {
+"duration": 1.0,
+"texture": SubResource("12")
+}, {
+"duration": 1.0,
+"texture": SubResource("13")
+}],
+"loop": true,
+"name": &"pigeon_idle",
+"speed": 4.5
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("1")
+}, {
+"duration": 1.0,
+"texture": SubResource("2")
+}, {
+"duration": 1.0,
+"texture": SubResource("3")
+}, {
+"duration": 1.0,
+"texture": SubResource("4")
+}],
+"loop": true,
+"name": &"pigeon_walk",
+"speed": 4.5
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("14")
+}, {
+"duration": 1.0,
+"texture": SubResource("15")
+}, {
+"duration": 1.0,
+"texture": SubResource("16")
+}, {
+"duration": 1.0,
+"texture": SubResource("17")
+}],
+"loop": true,
+"name": &"snake_idle",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("6")
+}, {
+"duration": 1.0,
+"texture": SubResource("7")
+}, {
+"duration": 1.0,
+"texture": SubResource("8")
+}, {
+"duration": 1.0,
+"texture": SubResource("9")
+}],
+"loop": true,
+"name": &"snake_walk",
+"speed": 4.5
+}]
+
+[node name="Animal" type="Node2D"]
+script = ExtResource("1_kvb0y")
+
+[node name="Area2D" type="Area2D" parent="."]
+position = Vector2(0, -32)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+shape = SubResource("18")
+
+[node name="AnimatedSprite" type="AnimatedSprite2D" parent="."]
+position = Vector2(0, -32)
+scale = Vector2(4, 4)
+sprite_frames = SubResource("5")
+animation = &"snake_idle"
+
+[node name="Front" type="Node2D" parent="."]
+
+[node name="Label" type="Label" parent="Front"]
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+grow_horizontal = 2
+text = "dsdfdfdfsfdfdfdf"
+
+[node name="Panel" type="Panel" parent="Front"]
+self_modulate = Color(1, 1, 1, 0.901961)
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Front/Panel"]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="Description" type="Label" parent="Front/Panel/VBoxContainer"]
+layout_mode = 2
+text = "test"
+
+[connection signal="mouse_entered" from="Area2D" to="." method="_on_Area2D_mouse_entered"]
+[connection signal="mouse_exited" from="Area2D" to="." method="_on_Area2D_mouse_exited"]

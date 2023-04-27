@@ -40,8 +40,8 @@ func _ready():
 		sprite.frame = randi() % frame_length
 	sprite.play(animals[animal_id] + "_walk")
 
-	position.x = position.x + rand_range(-760, 760)
-	position.y = position.y + rand_range(-20, 25)
+	position.x = position.x + randf_range(-760, 760)
+	position.y = position.y + randf_range(-20, 25)
 	_change_direction()
 
 func _process(delta):
@@ -51,7 +51,7 @@ func _process(delta):
 		position.x += to_direction * (15 * delta)
 
 func _change_direction():
-	to_position = rand_range(-760, 760)
+	to_position = randf_range(-760, 760)
 	to_direction = int(sign(to_position - position.x))
 	sprite.flip_h = true if to_direction < 0 else false
 
