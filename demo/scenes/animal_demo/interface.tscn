@@ -9,47 +9,42 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
 script = ExtResource("1_tlx26")
 
 [node name="GridContainer" type="GridContainer" parent="."]
-layout_mode = 0
-anchor_right = 1.0
-anchor_bottom = 1.0
-columns = 2
+layout_mode = 1
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = 74.0
+offset_top = -186.0
+offset_right = 445.0
+offset_bottom = 109.0
+grow_vertical = 2
 
-[node name="Space4" type="Control" parent="GridContainer"]
+[node name="ScanButton" type="Button" parent="GridContainer"]
 layout_mode = 2
-size_flags_horizontal = 6
-size_flags_vertical = 6
+text = "Start scan"
 
 [node name="DeviceName" type="Label" parent="GridContainer"]
 layout_mode = 2
 size_flags_horizontal = 6
 size_flags_vertical = 6
 text = "Device name: "
-
-[node name="Space1" type="Control" parent="GridContainer"]
-layout_mode = 2
-size_flags_horizontal = 6
-size_flags_vertical = 6
+vertical_alignment = 1
 
 [node name="Address" type="Label" parent="GridContainer"]
 layout_mode = 2
 size_flags_horizontal = 6
 size_flags_vertical = 6
 text = "Address: "
+vertical_alignment = 1
 
-[node name="Space2" type="Control" parent="GridContainer"]
+[node name="RichTextLabel" type="RichTextLabel" parent="GridContainer"]
+custom_minimum_size = Vector2(0, 200)
 layout_mode = 2
-size_flags_horizontal = 6
-size_flags_vertical = 6
+bbcode_enabled = true
+scroll_following = true
 
-[node name="Test" type="Label" parent="GridContainer"]
-layout_mode = 2
-size_flags_horizontal = 6
-size_flags_vertical = 6
-
-[node name="Space3" type="Control" parent="GridContainer"]
-layout_mode = 2
-size_flags_horizontal = 6
-size_flags_vertical = 6
+[connection signal="pressed" from="GridContainer/ScanButton" to="." method="_on_scan_button_pressed"]

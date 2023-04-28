@@ -8,5 +8,9 @@ void fragment(){
 	vec2 scale_UV = UV;
 	vec2 wave_uv_offset = vec2(0.);
 	wave_uv_offset.x = cos((TIME*wave_speed) + UV.x+UV.y*wave_freq*2.0) * wave_width*0.01;
-	COLOR = texture(TEXTURE, scale_UV + wave_uv_offset);
+	vec4 tex = texture(TEXTURE, scale_UV + wave_uv_offset);
+	if (tex.a > 0.5) {
+		tex.a = 0.5 + (cos(TIME/2.0) + 1.0) / 6.0;
+	}
+	COLOR = tex;
 }
