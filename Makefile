@@ -13,3 +13,6 @@ edit:
 
 test: build-debug
 	$(GODOT_BINARY_PATH) --path $(GODOT_PROJECT_PATH) -d
+
+linux-export:
+	$(GODOT_BINARY_PATH) --path $(GODOT_PROJECT_PATH) --headless --export-release "Linux/X11" exports/linux/bin.x86_64

@@ -1,0 +1,21 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://c18m6tadwhi6y"
+path="res://.godot/imported/11804_Airplane_v2_l2.obj-b01ce9018b2b8d087e5aa848df5daa13.mesh"
+
+[deps]
+
+files=["res://.godot/imported/11804_Airplane_v2_l2.obj-b01ce9018b2b8d087e5aa848df5daa13.mesh"]
+
+source_file="res://assets/airplane/11804_Airplane_v2_l2.obj"
+dest_files=["res://.godot/imported/11804_Airplane_v2_l2.obj-b01ce9018b2b8d087e5aa848df5daa13.mesh", "res://.godot/imported/11804_Airplane_v2_l2.obj-b01ce9018b2b8d087e5aa848df5daa13.mesh"]
+
+[params]
+
+generate_tangents=true
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+optimize_mesh=true

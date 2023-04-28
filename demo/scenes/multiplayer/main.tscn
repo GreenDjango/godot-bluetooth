@@ -1,45 +1,243 @@
-[gd_scene load_steps=2 format=3 uid="uid://dw2eqff0un010"]
+[gd_scene load_steps=12 format=3 uid="uid://d3jk7om0v6tih"]
 
 [ext_resource type="Script" path="res://scripts/multiplayer/main.gd" id="1_ht5rg"]
+[ext_resource type="PackedScene" uid="uid://bgnlufll2j1y1" path="res://scenes/multiplayer/airplane.tscn" id="2_y8qv6"]
 
-[node name="Main" type="Control"]
+[sub_resource type="Environment" id="Environment_bt6nj"]
+background_mode = 2
+ambient_light_source = 3
+ambient_light_color = Color(1, 1, 1, 1)
+
+[sub_resource type="Animation" id="Animation_oe5xj"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Camera3D:rotation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(-0.261799, 0, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Camera3D:position")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0, 6, 12)]
+}
+
+[sub_resource type="Animation" id="Animation_i43k6"]
+resource_name = "turn"
+length = 20.0
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Camera3D:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 5, 10, 15, 20),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 0,
+"values": [Vector3(0, 6, 12), Vector3(11, 6, 0), Vector3(0, 6, -11), Vector3(-14, 6, 0), Vector3(0, 6, 12)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Camera3D:rotation")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 20),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector3(-0.261799, 0, 0), Vector3(-0.261799, 6.28319, 0)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_rujki"]
+_data = {
+"RESET": SubResource("Animation_oe5xj"),
+"turn": SubResource("Animation_i43k6")
+}
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_l11f1"]
+size = Vector2(50, 50)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_4b5wg"]
+albedo_color = Color(0.333333, 0.643137, 0.113725, 1)
+emission = Color(0.972549, 0.972549, 0.972549, 1)
+emission_energy_multiplier = 15.21
+ao_light_affect = 1.0
+
+[sub_resource type="WorldBoundaryShape3D" id="WorldBoundaryShape3D_yyrac"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_tvyjb"]
+albedo_color = Color(1, 0, 1, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_67sx5"]
+material = SubResource("StandardMaterial3D_tvyjb")
+
+[node name="Main" type="Node3D"]
+script = ExtResource("1_ht5rg")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_bt6nj")
+
+[node name="Game" type="Node3D" parent="."]
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="Game"]
+light_color = Color(1, 1, 0.94902, 1)
+light_energy = 2.0
+directional_shadow_mode = 1
+
+[node name="airplane" parent="Game" instance=ExtResource("2_y8qv6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 10, 0)
+
+[node name="Camera3D" type="Camera3D" parent="Game/airplane"]
+transform = Transform3D(1, 0, 0, 0, 0.965926, 0.258819, 0, -0.258819, 0.965926, 0, 6, 12)
+current = true
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Game/airplane"]
+autoplay = "turn"
+libraries = {
+"": SubResource("AnimationLibrary_rujki")
+}
+
+[node name="Ground" type="StaticBody3D" parent="Game"]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Game/Ground"]
+mesh = SubResource("PlaneMesh_l11f1")
+surface_material_override/0 = SubResource("StandardMaterial3D_4b5wg")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Game/Ground"]
+shape = SubResource("WorldBoundaryShape3D_yyrac")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Game"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, -16)
+mesh = SubResource("BoxMesh_67sx5")
+
+[node name="Players" type="Node3D" parent="Game"]
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="Control" type="Control" parent="CanvasLayer"]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("1_ht5rg")
+metadata/_edit_lock_ = true
 
-[node name="Start server" type="Button" parent="."]
+[node name="Menu" type="Control" parent="CanvasLayer/Control"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+metadata/_edit_lock_ = true
+
+[node name="Start server" type="Button" parent="CanvasLayer/Control/Menu"]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -122.5
-offset_top = -15.5
-offset_right = -23.5
-offset_bottom = 15.5
+offset_left = -120.0
+offset_top = -15.0
+offset_right = -21.0
+offset_bottom = 16.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_default_cursor_shape = 2
 text = "Start server"
 
-[node name="Start client" type="Button" parent="."]
+[node name="Start client" type="Button" parent="CanvasLayer/Control/Menu"]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = 29.5
-offset_top = -15.5
-offset_right = 122.5
-offset_bottom = 15.5
+offset_left = 24.0
+offset_top = -15.0
+offset_right = 117.0
+offset_bottom = 16.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_default_cursor_shape = 2
 text = "Start client"
 
-[connection signal="pressed" from="Start server" to="." method="_on_start_server_pressed"]
-[connection signal="pressed" from="Start client" to="." method="_on_start_client_pressed"]
+[node name="ScanList" type="ItemList" parent="CanvasLayer/Control"]
+visible = false
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -266.5
+offset_top = -168.5
+offset_right = 266.5
+offset_bottom = 168.5
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ServerPanel" type="Panel" parent="CanvasLayer/Control"]
+visible = false
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -192.0
+offset_top = -109.5
+offset_right = 192.0
+offset_bottom = 109.5
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Start Game" type="Button" parent="CanvasLayer/Control/ServerPanel"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -46.0
+offset_top = 8.5
+offset_right = 47.0
+offset_bottom = 39.5
+grow_horizontal = 2
+mouse_default_cursor_shape = 2
+text = "Start game"
+
+[node name="RichTextLabel" type="RichTextLabel" parent="CanvasLayer/Control/ServerPanel"]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 16.0
+offset_top = -168.0
+offset_right = -16.0
+offset_bottom = -12.0
+grow_horizontal = 2
+grow_vertical = 0
+bbcode_enabled = true
+
+[connection signal="pressed" from="CanvasLayer/Control/Menu/Start server" to="." method="_on_start_server_pressed"]
+[connection signal="pressed" from="CanvasLayer/Control/Menu/Start client" to="." method="_on_start_client_pressed"]
+[connection signal="item_activated" from="CanvasLayer/Control/ScanList" to="." method="_on_scan_list_item_activated"]
+[connection signal="pressed" from="CanvasLayer/Control/ServerPanel/Start Game" to="." method="_on_start_game_pressed"]
