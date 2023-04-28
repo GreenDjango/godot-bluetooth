@@ -35,17 +35,16 @@ func _physics_process(delta: float):
 		# inputs.update()
 		pass
 
-	if multiplayer.multiplayer_peer == null or is_multiplayer_authority():
-		# The server updates the position that will be notified to the clients.
-		synced_position = position
-	else:
-		# The client simply updates the position to the last known one.
-		position = synced_position
+#	if multiplayer.multiplayer_peer == null or is_multiplayer_authority():
+#		# The server updates the position that will be notified to the clients.
+#		synced_position = position
+#	else:
+#		# The client simply updates the position to the last known one.
+#		position = synced_position
 
 	# Throttle input
 	if Input.is_action_pressed("player_space"):
 		target_speed = min(forward_speed + throttle_delta * delta, max_flight_speed)
-		print(target_speed)
 	else:
 		var limit = 0 if grounded else min_flight_speed
 		target_speed = max(forward_speed - throttle_delta * delta, limit)
@@ -64,4 +63,4 @@ func _physics_process(delta: float):
 
 
 func _move_player(_delta: float):
-	apply_central_force(Vector3.UP * 10)
+	apply_central_force(Vector3.FORWARD)
