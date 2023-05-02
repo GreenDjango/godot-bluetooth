@@ -12,7 +12,7 @@ const projectShortName = 'GBM'
 /** @type {import('@docusaurus/types').Config} */
 const config = {
   title: projectName,
-  tagline: 'Dinosaurs are cool',
+  tagline: 'Bring the Bluetooth into your Godot game!',
   url: 'https://greendjango.github.io/',
   baseUrl: '/godot-bluetooth/',
   favicon: 'img/favicon.ico',
@@ -154,6 +154,10 @@ const config = {
             title: 'Docs',
             items: [
               {
+                label: 'How to install',
+                to: '/docs/install',
+              },
+              {
                 label: 'Tutorial',
                 to: '/docs/intro',
               },
@@ -194,6 +198,14 @@ const config = {
             items: [
               {
                 label: 'Illustrations by Storyset',
+                href: 'https://storyset.com/online',
+              },
+              {
+                label: 'MIT License',
+                href: 'https://storyset.com/online',
+              },
+              {
+                label: 'Copyright',
                 href: 'https://storyset.com/online',
               },
             ],

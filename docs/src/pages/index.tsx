@@ -15,62 +15,55 @@ type FeatureItem = {
 const FeatureList: FeatureItem[] = [
   {
     title: 'Easy to Use',
-    Svg: require('@site/static/img/undraw_docusaurus_mountain.svg').default,
+    Svg: require('@site/static/img/working_from_anywhere-cuate.svg').default,
     description: (
       <>
-        Docusaurus was designed from the ground up to be easily installed and
-        used to get your website up and running quickly.
+        GBM was designed from the ground up to be easily installed and
+        used to get your game up and running quickly.
       </>
     ),
   },
   {
     title: 'Focus on What Matters',
-    Svg: require('@site/static/img/undraw_docusaurus_tree.svg').default,
+    Svg: require('@site/static/img/developer_activity-cuate.svg').default,
     description: (
       <>
-        Docusaurus lets you focus on your docs, and we&apos;ll do the chores. Go
-        ahead and move your docs into the <code>docs</code> directory.
+        GBM lets you focus on your game, and we&apos;ll do the chores. Go
+        ahead and download GBM plugin.
       </>
     ),
   },
   {
-    title: 'Powered by React',
-    Svg: require('@site/static/img/undraw_docusaurus_react.svg').default,
+    title: 'Powered by the community',
+    Svg: require('@site/static/img/all_the_data-cuate.svg').default,
     description: (
       <>
-        Extend or customize your website layout by reusing React. Docusaurus can
-        be extended while reusing the same header and footer.
+        See the open source project on github and let's give your feedback.
       </>
     ),
   },
 ];
 
-function HomepageHeader() {
-  const { siteConfig } = useDocusaurusContext();
-  return (
-    <header className={clsx('hero hero--primary', styles.heroBanner)}>
-      <div className="container">
-        <h1 className="hero__title">{siteConfig.title}</h1>
-        <p className="hero__subtitle">{siteConfig.tagline}</p>
-        <div className={styles.buttons}>
-          <Link
-            className="button button--secondary button--lg"
-            to="/docs/intro">
-            Docusaurus Tutorial - 5min ⏱️
-          </Link>
-        </div>
-      </div>
-    </header>
-  );
-}
-
 export default function Home(): JSX.Element {
   const { siteConfig } = useDocusaurusContext();
+
   return (
     <Layout
       title={`Hello from ${siteConfig.title}`}
       description="Description will go into a meta tag in <head />">
-      <HomepageHeader />
+      <header className={clsx('hero hero--primary', styles.heroBanner)}>
+        <div className="container">
+          <h1 className="hero__title">{siteConfig.title}</h1>
+          <p className="hero__subtitle">{siteConfig.tagline}</p>
+          <div className={styles.buttons}>
+            <Link
+              className="button button--secondary button--lg"
+              to="/docs/intro">
+              First Step Tutorial - 5min ⏱️
+            </Link>
+          </div>
+        </div>
+      </header>
       <main>
 
         <section className={styles.features}>
