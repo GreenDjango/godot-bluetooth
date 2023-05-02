@@ -65,15 +65,17 @@ func _on_start_game_pressed():
 		spawn_points[p_id] = Vector2(randf_range(-16, 16), randf_range(-16, 16))
 
 	for p_id in spawn_points:
-		var player = player_scene.instantiate()
-		player.synced_position = Vector3(spawn_points[p_id].x, 0, spawn_points[p_id].y)
-		player.player_id = p_id
 		if p_id == 1:
-			player.player_name = "You"
+			$Game/airplane.position = Vector3(spawn_points[p_id].x, 0, spawn_points[p_id].y)
+			$Game/airplane.player_id = p_id
+			$Game/airplane/Label3D.text = "You"
 		else:
+			var player = player_scene.instantiate()
+			player.synced_position = Vector3(spawn_points[p_id].x, 0, spawn_points[p_id].y)
+			player.player_id = p_id
 			player.player_name = players[p_id]
+			$Game/Players.add_child(player, true)
 		# player.set_player_name(player_name if p_id == multiplayer.get_unique_id() else players[p_id])
-		$Game/Players.add_child(player, true)
 
 @rpc("any_peer")
 func register_player(new_player_name: String):

@@ -106,7 +106,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 10, 0)
 [node name="Camera3D" type="Camera3D" parent="Game/airplane"]
 transform = Transform3D(1, 0, 0, 0, 0.965926, 0.258819, 0, -0.258819, 0.965926, 0, 6, 12)
 current = true
-fov = 140.0
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="Game/airplane"]
 autoplay = "turn"

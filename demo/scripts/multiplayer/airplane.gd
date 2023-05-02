@@ -8,20 +8,10 @@ var player_name := ""
 @export
 var player_id := -1
 
-const min_flight_speed := 10
-const max_flight_speed := 30
-const turn_speed := 0.75
-const pitch_speed := 0.5
-const level_speed := 3.0
-const throttle_delta := 200
-const acceleration := 6.0
-
-var forward_speed := 0
-var target_speed := 0
-var grounded := false
-
-var turn_input := 0
-var pitch_input := 0
+const max_flight_speed := 0.6
+const throttle_delta := 800000.0
+var current_speed := .0
+var turn_input := .0
 
 func _ready():
 	position = synced_position
@@ -41,26 +31,24 @@ func _physics_process(delta: float):
 #	else:
 #		# The client simply updates the position to the last known one.
 #		position = synced_position
-
+	var level_speed := .0
 	# Throttle input
 	if Input.is_action_pressed("player_space"):
-		target_speed = min(forward_speed + throttle_delta * delta, max_flight_speed)
-	else:
-		var limit = 0 if grounded else min_flight_speed
-		target_speed = max(forward_speed - throttle_delta * delta, limit)
+		level_speed = throttle_delta * delta
 	# Turn (roll/yaw) input
 	turn_input = 0
-	if forward_speed > 0.5:
-		turn_input -= Input.get_action_strength("player_right")
-		turn_input += Input.get_action_strength("player_left")
+	turn_input -= Input.get_action_strength("player_right")
+	turn_input += Input.get_action_strength("player_left")
+	rotate_y(turn_input * delta)
 	# Pitch (climb/dive) input
-	pitch_input = 0
-	if not grounded:
-		pitch_input -= Input.get_action_strength("player_down")
-	if forward_speed >= min_flight_speed:
-		pitch_input += Input.get_action_strength("player_up")
-	_move_player(delta)
+	var target_speed := .0
+	if Input.is_action_pressed("player_down"):
+		target_speed += max_flight_speed
+	if Input.is_action_pressed("player_up"):
+		target_speed -= max_flight_speed
+	current_speed = lerp(current_speed, target_speed, delta if target_speed == 0 else delta/4.0)
+	prints(current_speed, target_speed)
+	translate_object_local(Vector3(0, 0, current_speed))
 
-
-func _move_player(_delta: float):
-	apply_central_force(Vector3.FORWARD)
+	apply_central_force(Vector3(0, level_speed, 0))
+	
