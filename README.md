@@ -1,27 +1,23 @@
-# <img src="icons/icon_bluetooth.svg" alt="GGJ icon" width="50" style="margin-bottom: -6px;"/> Bluetooth Module
+# <img src="icons/icon_bluetooth.svg" alt="GGJ icon" width="50" style="margin-bottom: -6px;"/> Godot Bluetooth Module
 
-### (WIP) [Bluetooth®](https://www.bluetooth.com) module for godot 3.x
+### (WIP) [Bluetooth®](https://www.bluetooth.com) module for godot 4.x
 
 |**Platform**|**Support**|**Dependencies**|
 |---:|:---:|---:|
-|🪟 windows|❌|
-|🐧x11|✔️|[QT6](https://doc.qt.io/qt-6/qtbluetooth-index.html)
-|🍎osx|❌|
+|🪟 windows|✔️|[Simple BLE](https://github.com/OpenBluetoothToolbox/SimpleBLE)
+|🐧x11|✔️|[Simple BLE](https://github.com/OpenBluetoothToolbox/SimpleBLE)
+|🍎osx|✔️|[Simple BLE](https://github.com/OpenBluetoothToolbox/SimpleBLE)
 |📱android|❌|
 
 ### 💾 Setup:
-#### via submodule
-1. `git clone --depth 1 --recursive --single-branch --branch 3.4-stable https://github.com/godotengine/godot.git`
-2. open a terminal, `cd godot/modules/`, and run the following commands:  
-`git submodule add https://github.com/GreenDjango/godot-bluetooth.git bluetooth`  
-`cd ../`  
-`git submodule update --init --recursive`
 
-> You can change `--branch 3.4-stable` to other release like `3.3.4-stable`
+```shell
+git clone --depth 1 --recursive --single-branch --branch simple-ble https://github.com/GreenDjango/godot-bluetooth.git
+# or if you already have clone the repository
+cd godot-bluetooth/ && git submodule update --init --recursive
+```
 
-#### via download
-1. Download a [godot source code release](https://github.com/godotengine/godot/releases)
-2. Download the zip ([godot-bluetooth-master](https://github.com/GreenDjango/godot-bluetooth/archive/master.zip)) and extract it into the `godot/modules/` folder.
+> You can change `.gitmodules` to other godot release like `4.1`
 
 ### 🛠 Building
 
@@ -30,46 +26,47 @@
 <details>
       <summary>🐧<b>Ubuntu</b> dependencies</summary>
 
-      sudo apt-get install qt6-connectivity-dev
+      sudo apt-get install libdbus-1-dev
 </details>
 <details>
       <summary>🐧<b>Fedora</b> dependencies</summary>
 
-      sudo dnf install qt6-qtconnectivity-devel
+      sudo dnf install dbus-devel
 </details>
 <details>
       <summary>🐧<b>Arch</b> dependencies</summary>
 
-      sudo yay -Syu qt6-connectivity
+      sudo yay -Syu dbus-devel
 </details>
 
-For compiling Godot under Linux or other Unix variants, [the following is required](https://docs.godotengine.org/en/3.4/development/compiling/compiling_for_x11.html#distro-specific-one-liners).
+For compiling Godot under Linux or other Unix variants, [the following is required](https://docs.godotengine.org/en/4.0/development/compiling/compiling_for_x11.html#distro-specific-one-liners).
 
-Then, you can use `scons -j8 platform=x11` for start compiling, where `-j8` is the number of threads.
+Then, you can use `scons -j8 platform=linux` for start compiling, where `-j8` is the number of threads.
 
-> NOTE: use SCONS flags `production=yes tools=yes target=release_debug` for your editor and `production=yes tools=no target=release` for your templates.
+> NOTE: See the `Makefile` for other build.
 
-Godot binary is create in the `bin/` folder like `bin/godot.x11.tools.64`.
+Dynamic library is create in the `addons/xxx/lib` folder like `addons/blueplug/lib/libblueplug.linux.template_debug.x86_64.so`.
 
-> If you want to use separate editor settings for your own Godot builds and official releases, you can enable Self-contained mode by creating a file called `._sc_` or `_sc_` in the `bin/` folder.
+You can now start Godot 4.x and open `demo` project for test the generated library.
+
+> If you want to use separate editor settings for your own Godot builds and official releases, you can enable Self-contained mode by creating a file called `._sc_` or `_sc_` next to your Godot binary.
 
 #### From other
 
-[See the official docs](https://docs.godotengine.org/en/3.4/development/compiling/) for compilation instructions for every supported platform.
+[See the official docs](https://docs.godotengine.org/en/4.0/development/compiling/) for compilation instructions for every supported platform.
 
 ### 🎮 Godot
 |**Class**|**Description**|**Access**|
 |---:|:---|:---|
-|`Bluetooth`|Basic Bluetooth manger (switch BT on, scan nearby device, etc)|Node & GDScrip
-|`NetworkedMultiplayerBt`|its purpose is to provide wrapper methods for all Bluetooth calls with a NetworkedMultiplayerPeer godot type friendly interface.|GDScrip
+|`BluePlug`|Basic Bluetooth manger (switch BT on, scan nearby device, etc)|GDScript
+|`BluePlugMultiplayerPeer`|Its purpose is to provide wrapper methods for all Bluetooth calls with a NetworkedMultiplayerPeer godot type friendly interface.|GDScript
+|`BluePlugPacketPeer`|Godot internal use.|GDScript
 
 ### 🤝 Setup to contribute
 
 VScode is a good IDE for this project.
 
-You can `git clone` this repository and Godot repository next to each other, and then link module for compile with `scons custom_modules="../modules,/abs/path/to/modules,~/src/godot_modules"` or a symlink in `modules` folder with `ln -s ../../godot-bluetooth bluetooth`.
-
-For style, you need [ms-vscode.cpptools](https://marketplace.visualstudio.com/items?itemName=ms-vscode.cpptools). Next create `.vscode/settings.json` and add this line `{ "C_Cpp.clang_format_style": "file" }`. Or use `clang-format-13` cli without vscode.
+For style, you need [ms-vscode.cpptools](https://marketplace.visualstudio.com/items?itemName=ms-vscode.cpptools). Next create `.vscode/settings.json` and add this line `{ "C_Cpp.clang_format_style": "file" }`. Or use `clang-format-14` cli without vscode.
 
 ### TODO
 - doc_classes need to be written for GDScript documentation.
